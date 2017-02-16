@@ -68,7 +68,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.canvas);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "The Painter";
             this.ResumeLayout(false);
 
         }
