@@ -46,6 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\AddEllipse.cs" />
+    <Compile Include="Commands\AddRectangle.cs" />
+    <Compile Include="Commands\ChangeDrawingMode.cs" />
+    <Compile Include="Commands\DeselectItem.cs" />
+    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\MoveItem.cs" />
+    <Compile Include="Commands\ResizeItem.cs" />
+    <Compile Include="Commands\SelectItem.cs" />
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

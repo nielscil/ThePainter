@@ -12,9 +12,38 @@ namespace ThePainterFormsTest.Models
     public abstract class DrawableItem
     {
         protected int _x;
+        public int X
+        {
+            get
+            {
+                return _x;
+            }
+        }
+
         protected int _y;
+        public int Y
+        {
+            get
+            {
+                return _y;
+            }
+        }
         protected int _height;
+        public int Height
+        {
+            get
+            {
+                return _height;
+            }
+        }
         protected int _width;
+        public int Width
+        {
+            get
+            {
+                return _width;
+            }
+        }
 
         public Color Color { get; set; } = Color.Black;
 
@@ -32,10 +61,22 @@ namespace ThePainterFormsTest.Models
             _width += end.X - begin.X;
         }
 
+        public void Resize(int width, int height)
+        {
+            _width = width;
+            _height = height;
+        }
+
         public void Move(Point begin, Point end)
         {
             _x += end.X - begin.X;
             _y += end.Y - begin.Y;
+        }
+
+        public void Move(int x, int y)
+        {
+            _x = x;
+            _y = y;
         }
 
         public abstract void Draw(Graphics graphics);
@@ -55,6 +96,24 @@ namespace ThePainterFormsTest.Models
         public void Deselect()
         {
             Color = Color.Black;
+        }
+
+        public DrawableItem Clone()
+        {
+            DrawableItem item = null;
+
+            if(this is Ellipse)
+            {
+                item = new Ellipse(this._x, this._y, this._width, this._height);
+            }
+            else
+            {
+                item = new Rectangle(this._x, this._y, this._width, this._height);
+            }
+
+            item.Color = this.Color;
+
+            return item;
         }
     }
 }

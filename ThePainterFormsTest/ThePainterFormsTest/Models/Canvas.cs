@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThePainterFormsTest.Commands;
 using ThePainterFormsTest.Controllers;
 
 namespace ThePainterFormsTest.Models
@@ -13,13 +14,36 @@ namespace ThePainterFormsTest.Models
         public enum Mode { Rectange, Ellipse };
 
         private List<DrawableItem> _items = new List<DrawableItem>();
-        private DrawableItem _selectedItem = null;
 
+        private DrawableItem _selectedItem = null;
+        public DrawableItem SelectedItem
+        {
+            get
+            {
+                return _selectedItem;
+            }
+            set
+            {
+                if(value == null)
+                {
+                    _items.Add(_selectedItem);
+                    _tempItem = null;
+                }
+
+                _selectedItem = value;
+
+                if(_selectedItem != null)
+                {
+                    _tempItem = _selectedItem.Clone();
+                    _items.Remove(_selectedItem);
+                }
+            }
+        }
         public bool HasSelected
         {
             get
             {
-                return _selectedItem != null;
+                return SelectedItem != null;
             }
         }
 
@@ -33,7 +57,7 @@ namespace ThePainterFormsTest.Models
             set
             {
                 _drawingMode = value;
-                _isCreatingItem = null;
+                _tempItem = null;
                 SetButtonClicked();
             }
         }
@@ -43,22 +67,36 @@ namespace ThePainterFormsTest.Models
             DrawingMode = Mode.Rectange;
         }
 
+        public void SetDrawingMode(Mode mode)
+        {
+            PushHistory(new ChangeDrawingMode(mode));
+        }
+
+        public void AddItem(DrawableItem item)
+        {
+            _items.Add(item);
+        }
+
+        public void RemoveItem(DrawableItem item)
+        {
+            _items.Remove(item);
+        }
+
         public void SelectItem(Point location)
         {
-            _selectedItem?.Deselect();
-            _selectedItem = null;
-
             foreach (var item in _items)
             {
                 if (item.IsOnLocation(location))
                 {
-                    item.Select();
-                    _selectedItem = item;
-                    break;
+                    PushHistory(new SelectItem(item));
+                    return;
                 }
             }
 
-            Controller.Instance.InvalidateCanvas();
+            if (SelectedItem != null)
+            {
+                PushHistory(new DeselectItem(SelectedItem));
+            }
         }
 
         public void Draw(Graphics graphics)
@@ -67,20 +105,29 @@ namespace ThePainterFormsTest.Models
             {
                 item.Draw(graphics);
             }
-            _isCreatingItem?.Draw(graphics);
+            _tempItem?.Draw(graphics);
         }
 
-        private DrawableItem _isCreatingItem = null;
+        #region For Showing animation while changing
+
+        private DrawableItem _tempItem = null;
         public void IsCreating(Point begin, Point end)
         {
-            if(_isCreatingItem == null)
+            if(_tempItem == null)
             {
-                _isCreatingItem = CreateItem(begin, end);
-                _isCreatingItem.Color = Color.Gray;
+                if (DrawingMode == Mode.Rectange)
+                {
+                    _tempItem = new Rectangle(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y);
+                }
+                else
+                {
+                    _tempItem = new Ellipse(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y);
+                }
+                _tempItem.Color = Color.Gray;
             }
             else
             {
-                ResizeItem(_isCreatingItem, begin, end);
+                _tempItem.Resize(begin, end);
             }
 
             Controller.Instance.InvalidateCanvas();
@@ -88,9 +135,9 @@ namespace ThePainterFormsTest.Models
 
         public void IsMoving(Point begin, Point end)
         {
-            if(_selectedItem != null)
+            if(HasSelected)
             {
-                MoveItem(_selectedItem, begin, end);
+                _tempItem.Move(begin, end);
 
                 Controller.Instance.InvalidateCanvas();
             }
@@ -98,55 +145,54 @@ namespace ThePainterFormsTest.Models
 
         public void IsResizing(Point begin, Point end)
         {
-            if (_selectedItem != null)
+            if (HasSelected)
             {
-                ResizeItem(_selectedItem, begin, end);
+                _tempItem.Resize(begin, end);
 
                 Controller.Instance.InvalidateCanvas();
             }            
         }
 
-        public void CreateOrChangeItem(Point begin, Point end)
+        #endregion
+
+        public void CreateItem(Point begin, Point end)
         {
+            _tempItem = null;
+
             if (end != begin)
             {
-
-                if (_selectedItem == null)
+                if(!HasSelected)
                 {
-                    _items.Add(CreateItem(begin, end));
+                    if (DrawingMode == Mode.Rectange)
+                    {
+                        PushHistory(new AddRectangle(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y));
+                    }
+                    else
+                    {
+                        PushHistory(new AddEllipse(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y));
+                    }
                 }
                 else
                 {
-                    MoveItem(_selectedItem, begin, end);
-                }
-                _isCreatingItem = null;
-                Controller.Instance.InvalidateCanvas();
+                    ResizeItem(begin, end);
+                }            
             }
         }
 
-        private DrawableItem CreateItem(Point begin, Point end)
+        public void ResizeItem(Point begin, Point end)
         {
-            DrawableItem item = null;
-
-            if (DrawingMode == Mode.Rectange)
+            if(HasSelected)
             {
-                item = new Rectangle(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y);
+                PushHistory(new ResizeItem(SelectedItem, begin, end));
             }
-            else
+        }
+
+        public void MoveItem(Point begin, Point end)
+        {
+            if (HasSelected)
             {
-                item = new Ellipse(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y);
+                PushHistory(new MoveItem(SelectedItem, begin, end));
             }
-            return item;
-        }
-
-        private void ResizeItem(DrawableItem item, Point begin, Point end)
-        {
-            item.Resize(begin, end);
-        }
-
-        private void MoveItem(DrawableItem item, Point begin, Point end)
-        {
-            item.Move(begin, end);
         }
 
         private void SetButtonClicked()
@@ -156,6 +202,56 @@ namespace ThePainterFormsTest.Models
 
             Controller.Instance.SetButtonCLickedColors(rectangleColor, ellipseColor);
         }
+
+        #region History
+
+        private Stack<ICommand> _history = new Stack<ICommand>();
+        private Stack<ICommand> _redoHistory = new Stack<ICommand>();
+
+        private void PushHistory(ICommand command)
+        {
+            if(command != null)
+            {
+                command.Execute(this);
+                _history.Push(command);
+            }
+            _redoHistory.Clear();
+        }
+
+        private ICommand PopHistory()
+        {
+            if (_history.Count == 0)
+            {
+                return null;
+            }
+                
+            ICommand command = _history.Pop();
+            command.Undo(this);
+
+            return command;
+        }
+
+        public void Redo()
+        {
+            if(_redoHistory.Count > 0)
+            {
+                ICommand command = _redoHistory.Pop();
+                command.Execute(this);
+                _history.Push(command);
+            }
+        }
+
+        public void Undo()
+        {
+            ICommand command = PopHistory();
+
+            if(command != null)
+            {
+                _redoHistory.Push(command);
+            }
+        }
+
+        #endregion
 
     }
 }

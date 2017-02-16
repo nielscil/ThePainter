@@ -42,17 +42,31 @@ namespace ThePainterFormsTest.Controllers
             _form.RectangleButton.Click += RectangleButton_Click;
             _form.Ellipse.Click += Ellipse_Click;
             _form.Canvas.MouseMove += Canvas_MouseMove;
+            _form.KeyPreview = true;
+            _form.KeyDown += _form_KeyDown;
             Application.Run(_form);
+        }
+
+        private void _form_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Control && e.KeyCode == Keys.Z)
+            {
+                _canvas.Undo();
+            }
+            else if(e.Control && e.KeyCode == Keys.Y)
+            {
+                _canvas.Redo();
+            }
         }
 
         private void Ellipse_Click(object sender, EventArgs e)
         {
-            _canvas.DrawingMode = Canvas.Mode.Ellipse;
+            _canvas.SetDrawingMode(Canvas.Mode.Ellipse);
         }
 
         private void RectangleButton_Click(object sender, EventArgs e)
         {
-            _canvas.DrawingMode = Canvas.Mode.Rectange;
+            _canvas.SetDrawingMode(Canvas.Mode.Rectange);
         }
 
         public void SetButtonCLickedColors(Color rectangleColor, Color ellipseColor)
@@ -81,15 +95,27 @@ namespace ThePainterFormsTest.Controllers
         {
             if (e.Button == MouseButtons.Right && !_canvas.HasSelected)
             {
-                Point end = e.Location;
+                _canvas.CreateItem(_begin, e.Location);
+                _begin = Point.Empty;
+            }
 
-                _canvas.CreateOrChangeItem(_begin, end);
+            if(e.Button == MouseButtons.Right && _canvas.HasSelected)
+            {
+                _canvas.ResizeItem(_begin, e.Location);
                 _begin = Point.Empty;
             }
             
             if(e.Button == MouseButtons.Left)
             {
-                _canvas.SelectItem(e.Location);
+                if(e.Location == _begin)
+                {
+                    _canvas.SelectItem(e.Location);
+                }
+                else
+                {
+                    _canvas.MoveItem(_begin, e.Location);
+                }
+                
             }
         }
 
