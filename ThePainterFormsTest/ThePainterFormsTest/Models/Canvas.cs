@@ -15,6 +15,14 @@ namespace ThePainterFormsTest.Models
         private List<DrawableItem> _items = new List<DrawableItem>();
         private DrawableItem _selectedItem = null;
 
+        public bool HasSelected
+        {
+            get
+            {
+                return _selectedItem != null;
+            }
+        }
+
         private Mode _drawingMode;
         public Mode DrawingMode
         {
@@ -65,11 +73,6 @@ namespace ThePainterFormsTest.Models
         private DrawableItem _isCreatingItem = null;
         public void IsCreating(Point begin, Point end)
         {
-            if(_selectedItem != null)
-            {
-                _isCreatingItem = _selectedItem;
-            }
-
             if(_isCreatingItem == null)
             {
                 _isCreatingItem = CreateItem(begin, end);
@@ -77,9 +80,30 @@ namespace ThePainterFormsTest.Models
             }
             else
             {
-                ChangeItem(_isCreatingItem, begin, end);
+                ResizeItem(_isCreatingItem, begin, end);
             }
+
             Controller.Instance.InvalidateCanvas();
+        }
+
+        public void IsMoving(Point begin, Point end)
+        {
+            if(_selectedItem != null)
+            {
+                MoveItem(_selectedItem, begin, end);
+
+                Controller.Instance.InvalidateCanvas();
+            }
+        }
+
+        public void IsResizing(Point begin, Point end)
+        {
+            if (_selectedItem != null)
+            {
+                ResizeItem(_selectedItem, begin, end);
+
+                Controller.Instance.InvalidateCanvas();
+            }            
         }
 
         public void CreateOrChangeItem(Point begin, Point end)
@@ -93,7 +117,7 @@ namespace ThePainterFormsTest.Models
                 }
                 else
                 {
-                    ChangeItem(_selectedItem, begin, end);
+                    MoveItem(_selectedItem, begin, end);
                 }
                 _isCreatingItem = null;
                 Controller.Instance.InvalidateCanvas();
@@ -115,9 +139,14 @@ namespace ThePainterFormsTest.Models
             return item;
         }
 
-        private void ChangeItem(DrawableItem item, Point begin, Point end)
+        private void ResizeItem(DrawableItem item, Point begin, Point end)
         {
-            item.Move(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y);
+            item.Resize(begin, end);
+        }
+
+        private void MoveItem(DrawableItem item, Point begin, Point end)
+        {
+            item.Move(begin, end);
         }
 
         private void SetButtonClicked()

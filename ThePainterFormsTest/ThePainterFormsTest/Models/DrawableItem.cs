@@ -26,20 +26,24 @@ namespace ThePainterFormsTest.Models
             _width = width;
         }
 
-        public void Move(int x, int y, int width, int height)
+        public void Resize(Point begin, Point end)
         {
-            _x = x;
-            _y = y;
-            _height = height;
-            _width = width;
+            _height += end.Y - begin.Y;
+            _width += end.X - begin.X;
+        }
+
+        public void Move(Point begin, Point end)
+        {
+            _x += end.X - begin.X;
+            _y += end.Y - begin.Y;
         }
 
         public abstract void Draw(Graphics graphics);
 
         public bool IsOnLocation(Point point)
         {
-            bool isXInItem = point.X >= _x && point.X <= _x + _width;
-            bool isYInItem = point.Y >= _y && point.Y <= _y + _height;
+            bool isXInItem = (point.X >= _x && point.X <= _x + _width) || (point.X >= _x + _width && point.X <= _x);
+            bool isYInItem = (point.Y >= _y && point.Y <= _y + _height) || (point.Y >= _y + _height && point.Y <= _y);
             return isXInItem && isYInItem;
         }
 

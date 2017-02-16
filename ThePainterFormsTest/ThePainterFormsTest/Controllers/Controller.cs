@@ -13,7 +13,6 @@ namespace ThePainterFormsTest.Controllers
     public class Controller
     {
 
-
         private static Controller _instance;
         public static Controller Instance
         {
@@ -27,7 +26,6 @@ namespace ThePainterFormsTest.Controllers
             }
         }
 
-        private List<DrawableItem> _items = new List<DrawableItem>();
         private Form1 _form;
         private Canvas _canvas;
 
@@ -47,19 +45,6 @@ namespace ThePainterFormsTest.Controllers
             Application.Run(_form);
         }
 
-        private void Canvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            if(_begin != Point.Empty)
-            {
-                _canvas.IsCreating(_begin, e.Location);
-            }
-        }
-
-        public void InvalidateCanvas()
-        {
-            _form.Canvas.Invalidate();
-        }
-
         private void Ellipse_Click(object sender, EventArgs e)
         {
             _canvas.DrawingMode = Canvas.Mode.Ellipse;
@@ -76,17 +61,25 @@ namespace ThePainterFormsTest.Controllers
             _form.RectangleButton.BackColor = rectangleColor;
         }
 
+
+        public void InvalidateCanvas()
+        {
+            _form.Canvas.Invalidate();
+        }
+
         private void Canvas_Paint(object sender, PaintEventArgs e)
         {
             _canvas.Draw(e.Graphics);
             e.Graphics.Dispose();
         }
 
+
         private Point _begin = Point.Empty;
+        private Point _deltaBegin = Point.Empty;
 
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right && _begin != Point.Empty)
+            if (e.Button == MouseButtons.Right && !_canvas.HasSelected)
             {
                 Point end = e.Location;
 
@@ -102,10 +95,43 @@ namespace ThePainterFormsTest.Controllers
 
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            _begin = e.Location;
+            _deltaBegin = e.Location;
+        }
+
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && !_canvas.HasSelected)
             {
-                _begin = e.Location;
+                //adding
+                if (!_deltaBegin.IsEmpty)
+                {
+                    _canvas.IsCreating(_deltaBegin, e.Location);
+                    _deltaBegin = e.Location;
+                }
             }
+
+            if (e.Button == MouseButtons.Right && _canvas.HasSelected)
+            {
+                //resizing
+                if (!_deltaBegin.IsEmpty)
+                {
+                    _canvas.IsResizing(_deltaBegin, e.Location);
+                    _deltaBegin = e.Location;
+                }
+            }
+
+            else if (e.Button == MouseButtons.Left && _canvas.HasSelected)
+            {
+                //moving
+                if (!_deltaBegin.IsEmpty)
+                {
+                    _canvas.IsMoving(_deltaBegin, e.Location);
+                    _deltaBegin = e.Location;
+                }
+            }
+
+
         }
     }
 }
