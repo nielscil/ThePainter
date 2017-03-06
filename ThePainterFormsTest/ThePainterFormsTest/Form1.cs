@@ -39,6 +39,7 @@ namespace ThePainterFormsTest
         public Form1()
         {
             InitializeComponent();
+            DoubleBuffered = true;
         }
     }
 }
