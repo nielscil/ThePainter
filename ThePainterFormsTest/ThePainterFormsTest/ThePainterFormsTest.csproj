@@ -54,6 +54,7 @@
     <Compile Include="Commands\MoveItem.cs" />
     <Compile Include="Commands\ResizeItem.cs" />
     <Compile Include="Commands\SelectItem.cs" />
+    <Compile Include="Commands\SelectItemWithDeselect.cs" />
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

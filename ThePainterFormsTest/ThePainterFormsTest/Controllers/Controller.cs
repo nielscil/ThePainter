@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,11 +41,30 @@ namespace ThePainterFormsTest.Controllers
             _form.Canvas.MouseDown += Canvas_MouseDown;
             _form.Canvas.MouseUp += Canvas_MouseUp;
             _form.RectangleButton.Click += RectangleButton_Click;
-            _form.Ellipse.Click += Ellipse_Click;
+            _form.EllipseButton.Click += Ellipse_Click;
             _form.Canvas.MouseMove += Canvas_MouseMove;
             _form.KeyPreview = true;
             _form.KeyDown += _form_KeyDown;
+            _form.OpenFileButton.Click += OpenFileButton_Click;
+            _form.SaveFileButton.Click += SaveFileButton_Click;
             Application.Run(_form);
+        }
+
+        private void SaveFileButton_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void OpenFileButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.CheckFileExists = true;
+            dialog.Filter = "ThePainter files (*.pntr)|*.pntr";
+            dialog.Title = "Selecteer Bestand";
+            if(dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
+            {
+                FileParser.Instance.ReadFile(dialog.FileName);
+            }
         }
 
         private void _form_KeyDown(object sender, KeyEventArgs e)
@@ -71,7 +91,7 @@ namespace ThePainterFormsTest.Controllers
 
         public void SetButtonCLickedColors(Color rectangleColor, Color ellipseColor)
         {
-            _form.Ellipse.BackColor = ellipseColor;
+            _form.EllipseButton.BackColor = ellipseColor;
             _form.RectangleButton.BackColor = rectangleColor;
         }
 
@@ -79,6 +99,28 @@ namespace ThePainterFormsTest.Controllers
         public void InvalidateCanvas()
         {
             _form.Canvas.Invalidate();
+        }
+
+        public void AddToListBox(DrawableItem item)
+        {
+            ListBox listBox = _form.ListBox;
+            listBox.BeginUpdate();
+            listBox.Items.Clear();
+
+            listBox.Items.Add(item);
+
+            listBox.EndUpdate();
+        }
+
+        public void RemoveFromListBox(DrawableItem item)
+        {
+            ListBox listBox = _form.ListBox;
+            listBox.BeginUpdate();
+            listBox.Items.Clear();
+
+            listBox.Items.Remove(item);
+
+            listBox.EndUpdate();
         }
 
         private void Canvas_Paint(object sender, PaintEventArgs e)
@@ -109,7 +151,7 @@ namespace ThePainterFormsTest.Controllers
             {
                 if(e.Location == _begin)
                 {
-                    _canvas.SelectItem(e.Location);
+                    _canvas.SelectItemWithDeselect(e.Location);
                 }
                 else
                 {

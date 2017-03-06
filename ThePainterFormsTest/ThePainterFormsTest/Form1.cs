@@ -28,7 +28,7 @@ namespace ThePainterFormsTest
             }
         }
 
-        public Button Ellipse
+        public Button EllipseButton
         {
             get
             {
@@ -36,9 +36,34 @@ namespace ThePainterFormsTest
             }
         }
 
+        public Button OpenFileButton
+        {
+            get
+            {
+                return button3;
+            }
+        }
+
+        public Button SaveFileButton
+        {
+            get
+            {
+                return button4;
+            }
+        }
+
+        public ListBox ListBox
+        {
+            get
+            {
+                return listBox1;
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
+            DoubleBuffered = true;
         }
     }
 }

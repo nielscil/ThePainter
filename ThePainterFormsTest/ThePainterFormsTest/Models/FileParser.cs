@@ -17,8 +17,8 @@ namespace ThePainterFormsTest.Models
         private const string POSITION = "position";
 
 
-        private FileParser _instance;
-        public FileParser Instance
+        private static FileParser _instance;
+        public static FileParser Instance
         {
             get
             {
@@ -32,7 +32,7 @@ namespace ThePainterFormsTest.Models
 
         private FileParser() { }
 
-       public Canvas ReadFile(string path)
+        public Canvas ReadFile(string path)
         {
             if(!File.Exists(path))
             {
@@ -44,6 +44,11 @@ namespace ThePainterFormsTest.Models
                 
             }
             return null;
+        }
+
+        public bool WriteFile(string path, List<DrawableItem> items)
+        {
+            return true;
         }
 
         private List<DrawableItem> Parser(StreamReader reader)
@@ -77,7 +82,6 @@ namespace ThePainterFormsTest.Models
 
             return item;
         }
-
 
         private void OrnamentParser(string line)
         {

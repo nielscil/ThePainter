@@ -8,17 +8,20 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Commands
 {
-    class SelectItem : ICommand
+    class SelectItemWithDeselect : ICommand
     {
         private DrawableItem _item;
+        private DrawableItem _previousSelectedItem;
 
-        public SelectItem(DrawableItem item)
+        public SelectItemWithDeselect(DrawableItem item)
         {
             _item = item;
         }
 
         public void Execute(Canvas canvas)
         {
+            _previousSelectedItem = canvas.SelectedItem;
+            _previousSelectedItem?.Deselect();
 
             _item.Select();
             canvas.SelectedItem = _item;
@@ -30,6 +33,12 @@ namespace ThePainterFormsTest.Commands
         {
             _item.Deselect();
             canvas.SelectedItem = null;
+
+            if(_previousSelectedItem != null)
+            {
+                canvas.SelectedItem = _previousSelectedItem;
+                _previousSelectedItem.Select();
+            }
 
             Controller.Instance.InvalidateCanvas();
         }

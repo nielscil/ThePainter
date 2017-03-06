@@ -20,5 +20,10 @@ namespace ThePainterFormsTest.Models
                 graphics.DrawEllipse(pen, _x, _y, _width, _height);
             }  
         }
+
+        public override string ToString()
+        {
+            return "Ellipse " + base.ToString();
+        }
     }
 }

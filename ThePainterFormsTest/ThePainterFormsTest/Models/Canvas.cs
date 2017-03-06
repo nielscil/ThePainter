@@ -75,20 +75,22 @@ namespace ThePainterFormsTest.Models
         public void AddItem(DrawableItem item)
         {
             _items.Add(item);
+            Controller.Instance.AddToListBox(item);
         }
 
         public void RemoveItem(DrawableItem item)
         {
             _items.Remove(item);
+            Controller.Instance.RemoveFromListBox(item);
         }
 
-        public void SelectItem(Point location)
+        public void SelectItemWithDeselect(Point location)
         {
             foreach (var item in _items)
             {
                 if (item.IsOnLocation(location))
                 {
-                    PushHistory(new SelectItem(item));
+                    PushHistory(new SelectItemWithDeselect(item));
                     return;
                 }
             }
