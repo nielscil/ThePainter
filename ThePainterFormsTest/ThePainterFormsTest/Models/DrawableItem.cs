@@ -11,6 +11,8 @@ namespace ThePainterFormsTest.Models
 {
     public abstract class DrawableItem
     {
+        private string _name;
+
         protected int _x;
         public int X
         {
@@ -47,12 +49,13 @@ namespace ThePainterFormsTest.Models
 
         public Color Color { get; set; } = Color.Black;
 
-        public DrawableItem(int x, int y, int width, int height)
+        public DrawableItem(int x, int y, int width, int height, string name)
         {
             _x = x;
             _y = y;
             _height = height;
             _width = width;
+            _name = name;
         }
 
         public void Resize(Point begin, Point end)
@@ -98,6 +101,11 @@ namespace ThePainterFormsTest.Models
             Color = Color.Black;
         }
 
+        public string Serialize()
+        {
+            return $"{_name} {_x} {_y} {_width} {_height}";
+        }
+
         public DrawableItem Clone()
         {
             DrawableItem item = null;
@@ -114,6 +122,11 @@ namespace ThePainterFormsTest.Models
             item.Color = this.Color;
 
             return item;
+        }
+
+        public override string ToString()
+        {
+            return _name;
         }
     }
 }

@@ -15,15 +15,16 @@ namespace ThePainterFormsTest.Models
         private const string RECTANGLE = "rectangle";
         private const string ELLIPSE = "ellipse";
         private const string ORNAMENT = "ornament";
-        private const string POSITION = "position";
+        private const string TAB = "\t";
 
+        private int Line { get; set; }
 
         private static FileParser _instance;
         public static FileParser Instance
         {
             get
             {
-                if(Instance == null)
+                if(_instance == null)
                 {
                     _instance = new FileParser();
                 }
@@ -33,56 +34,59 @@ namespace ThePainterFormsTest.Models
 
         private FileParser() { }
 
+        #region Parser
+
         public List<DrawableItem> ReadFile(string path)
         {
-            if(!File.Exists(path))
+            if (!File.Exists(path))
             {
                 MessageBox.Show("File not found!", "The Painter", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
 
+            Line = 0;
+
             using (StreamReader stream = File.OpenText(path))
             {
-                
+                return Parser(stream);
             }
-            return null;
-        }
-
-        public bool WriteFile(string path, List<DrawableItem> items)
-        {
-            return true;
         }
 
         private List<DrawableItem> Parser(StreamReader reader)
         {
-            List<DrawableItem> item = new List<DrawableItem>();
+            List<DrawableItem> items = new List<DrawableItem>();
 
             while(!reader.EndOfStream)
             {
-                string line = reader.ReadLine();
-                string[] array = line.Split(' ');
-
-                if(array.Length > 0)
+                try
                 {
-                    switch(array[0])
+                    Line++;
+                    string line = reader.ReadLine();
+                    string itemName = GetItem(line);
+
+                    switch (itemName)
                     {
                         case GROUP:
-                 
+                            //TODO: add group
                             break;
                         case ORNAMENT:
-
+                            //TODO: add text
                             break;
                         case ELLIPSE:
-                            
+                            items.Add(EllipseParser(line));
                             break;
                         case RECTANGLE:
-
+                            items.Add(RectangleParser(line));
                             break;
                     }
                 }
+                catch(Exception e)
+                {
+                    MessageBox.Show(e.Message, "The Painter", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
 
-            return item;
+            return items;
         }
 
         private void OrnamentParser(string line)
@@ -93,53 +97,145 @@ namespace ThePainterFormsTest.Models
         private void GroupParser(StreamReader reader)
         {
             //do stuff
+
         }
 
         private Rectangle RectangleParser(string line)
         {
-            string[] stringArray = line.Split(' ');
+            string[] options = GetOptions(line);
             int x, y, width, height;
 
-            Rectangle rectangle = null;
-
-            if(stringArray.Length == 5)
+            if(options.Length == 4)
             {
-                bool canParseX = int.TryParse(stringArray[1], out x);
-                bool canParseY = int.TryParse(stringArray[2], out y);
-                bool canParseWidth = int.TryParse(stringArray[3], out width);
-                bool canParseHeight = int.TryParse(stringArray[4], out height);
+                bool canParseX = int.TryParse(options[0], out x);
+                bool canParseY = int.TryParse(options[1], out y);
+                bool canParseWidth = int.TryParse(options[2], out width);
+                bool canParseHeight = int.TryParse(options[3], out height);
 
                 if (canParseX && canParseY && canParseWidth && canParseHeight)
                 {
-                    rectangle = new Rectangle(x, y, width, height);
+                    return new Rectangle(x, y, width, height);
                 }
             }
 
-            return rectangle;
+            throw new Exception($"Line[{Line}]: Could not parse Rectangle");
         }
 
         private Ellipse EllipseParser(string line)
         {
-            string[] stringArray = line.Split(' ');
+            string[] options = GetOptions(line);
             int x, y, width, height;
 
-            Ellipse ellipse = null;
-
-            if (stringArray.Length == 5)
+            if (options.Length == 4)
             {
-                bool canParseX = int.TryParse(stringArray[1], out x);
-                bool canParseY = int.TryParse(stringArray[2], out y);
-                bool canParseWidth = int.TryParse(stringArray[3], out width);
-                bool canParseHeight = int.TryParse(stringArray[4], out height);
+                bool canParseX = int.TryParse(options[0], out x);
+                bool canParseY = int.TryParse(options[1], out y);
+                bool canParseWidth = int.TryParse(options[2], out width);
+                bool canParseHeight = int.TryParse(options[3], out height);
 
                 if (canParseX && canParseY && canParseWidth && canParseHeight)
                 {
-                    ellipse = new Ellipse(x, y, width, height);
+                    return new Ellipse(x, y, width, height);
                 }
             }
 
-            return ellipse;
+            throw new Exception($"Line[{Line}]: Could not parse Ellipse");
         }
+
+        private string GetItem(string line)
+        {
+            string[] lineArray = line.Split(' ');
+            
+            if(lineArray.Length > 0)
+            {
+                return lineArray[0];
+            }
+
+            throw new Exception($"Line[{Line}]: Item not found");
+        }
+
+        private string[] GetOptions(string line)
+        {
+            string[] lineArray = line.Split(' ');
+
+            if(lineArray.Length > 0)
+            {
+                return lineArray.Skip(1).ToArray();
+            }
+
+            throw new Exception("No options found");
+        }
+
+        #endregion
+
+        #region Writer
+
+        public bool WriteFile(string path, List<DrawableItem> items)
+        {
+            try
+            {
+                using (var streamWriter = File.CreateText(path))
+                {
+                    streamWriter.Write(SerializeItems(items));
+                }
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "The Painter", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            return true;
+        }
+
+        private string SerializeItems(List<DrawableItem> items)
+        {
+            string serialized = "";
+
+            foreach(var item in items)
+            {
+                serialized += GetSerializedItem(item);
+            }
+
+            return serialized;
+        }
+
+        private string GetSerializedItem(DrawableItem item, string prefix = "")
+        {
+            switch (item.ToString())
+            {
+                case RECTANGLE:
+                    return prefix + Serialize(item) + Environment.NewLine;
+                case ELLIPSE:
+                    return prefix + Serialize(item) + Environment.NewLine;
+                case GROUP:
+                    return prefix + SerializeGroup(item, prefix) + Environment.NewLine;
+                case ORNAMENT:
+                    return prefix + Serialize(item) + Environment.NewLine;
+            }
+
+            throw new Exception("No object found");
+        }
+
+        private string SerializeGroup(DrawableItem item, string prefix = "")
+        {
+            string serialized = "";
+
+            //add group
+            serialized += Serialize(item) + Environment.NewLine;
+            prefix += Environment.NewLine;
+
+            //add sub items with tab in front!
+
+            return serialized;
+        }
+
+        private string Serialize(DrawableItem item)
+        {
+            return item.Serialize();
+        }
+
+        #endregion
 
     }
 }

@@ -9,7 +9,9 @@ namespace ThePainterFormsTest.Models
 {
     public class Rectangle : DrawableItem
     {
-        public Rectangle(int x, int y, int width, int height) : base(x, y, width, height) { }
+        public const string Name = "rectangle";
+
+        public Rectangle(int x, int y, int width, int height) : base(x, y, width, height, Name) { }
 
         public override void Draw(Graphics graphics)
         {
@@ -21,11 +23,6 @@ namespace ThePainterFormsTest.Models
                 graphics.DrawLine(p, _x, _y + _height, _x + _width, _y + _height);
             }
                 
-        }
-
-        public override string ToString()
-        {
-            return "Rectangle";
         }
     }
 }

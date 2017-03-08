@@ -52,6 +52,30 @@ namespace ThePainterFormsTest
             }
         }
 
+        public Button AddGroupButton
+        {
+            get
+            {
+                return button5;
+            }
+        }
+
+        public Button RemoveGroupButton
+        {
+            get
+            {
+                return button6;
+            }
+        }
+
+        public Button ClearCanvasButton
+        {
+            get
+            {
+                return button7;
+            }
+        }
+
         public ListBox ListBox
         {
             get

@@ -34,21 +34,48 @@ namespace ThePainterFormsTest.Controllers
 
         public void LoadApplication()
         {
-            _form = new Form1();
-            _canvas = new Canvas();
+            SetForm();
 
+            SetCanvas();
+
+            SetButtonEventListeners();
+              
+            Application.Run(_form);
+        }
+
+        private void SetForm()
+        {
+            _form = new Form1();
+            _form.KeyPreview = true;
+            _form.KeyDown += _form_KeyDown;
+        }
+
+        private void SetCanvas()
+        {
+            _canvas = new Canvas();
             _form.Canvas.Paint += Canvas_Paint;
             _form.Canvas.MouseDown += Canvas_MouseDown;
             _form.Canvas.MouseUp += Canvas_MouseUp;
+            _form.Canvas.MouseMove += Canvas_MouseMove;
+        }
+
+        private void SetButtonEventListeners()
+        {
             _form.RectangleButton.Click += RectangleButton_Click;
             _form.EllipseButton.Click += Ellipse_Click;
-            _form.Canvas.MouseMove += Canvas_MouseMove;
-            _form.KeyPreview = true;
-            _form.KeyDown += _form_KeyDown;
+
             _form.OpenFileButton.Click += OpenFileButton_Click;
             _form.SaveFileButton.Click += SaveFileButton_Click;
-            _form.ListBox.SelectionMode = SelectionMode.MultiExtended;
-            Application.Run(_form);
+
+            _form.ClearCanvasButton.Click += ClearCanvasButton_Click;
+        }
+
+        private void ClearCanvasButton_Click(object sender, EventArgs e)
+        {
+            if(MessageBox.Show("Weet u zeker dat u het canvas wil legen?","The Painter",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                _canvas.Clear();
+            }
         }
 
         private void Canvas_Paint(object sender, PaintEventArgs e)
@@ -58,19 +85,31 @@ namespace ThePainterFormsTest.Controllers
 
         private void SaveFileButton_Click(object sender, EventArgs e)
         {
-            
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.OverwritePrompt = true;
+            dialog.Filter = "ThePainter files (*.pntr)|*.pntr";
+            dialog.Title = "Save File";
+
+            if(dialog.ShowDialog() == DialogResult.OK)
+            {
+                _canvas.SaveCanvasToFile(dialog.FileName);
+            }
+
         }
 
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.CheckFileExists = true;
+            dialog.Multiselect = false;
             dialog.Filter = "ThePainter files (*.pntr)|*.pntr";
-            dialog.Title = "Selecteer Bestand";
+            dialog.Title = "Open File";
+
             if(dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
             {
-                FileParser.Instance.ReadFile(dialog.FileName);
+                _canvas.OpenFileToCanvas(dialog.FileName);
             }
+
         }
 
         private void _form_KeyDown(object sender, KeyEventArgs e)

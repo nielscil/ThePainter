@@ -49,10 +49,13 @@
     <Compile Include="Commands\AddEllipse.cs" />
     <Compile Include="Commands\AddRectangle.cs" />
     <Compile Include="Commands\ChangeDrawingMode.cs" />
+    <Compile Include="Commands\ClearCanvas.cs" />
     <Compile Include="Commands\DeselectItem.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\MoveItem.cs" />
+    <Compile Include="Commands\OpenFile.cs" />
     <Compile Include="Commands\ResizeItem.cs" />
+    <Compile Include="Commands\SaveFile.cs" />
     <Compile Include="Commands\SelectItem.cs" />
     <Compile Include="Commands\SelectItemWithDeselect.cs" />
     <Compile Include="Controllers\Controller.cs" />

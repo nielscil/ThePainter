@@ -12,6 +12,14 @@ namespace ThePainterFormsTest.Models
 {
     public class Canvas
     {
+        private Controller Controller
+        {
+            get
+            {
+                return Controller.Instance;
+            }
+        }
+
         public enum Mode { Rectange, Ellipse };
 
         private List<DrawableItem> _items = new List<DrawableItem>();
@@ -74,13 +82,13 @@ namespace ThePainterFormsTest.Models
         public void AddItem(DrawableItem item)
         {
             _items.Add(item);
-            Controller.Instance.AddToListBox(item);
+            Controller.AddToListBox(item);
         }
 
         public void RemoveItem(DrawableItem item)
         {
             _items.Remove(item);
-            Controller.Instance.RemoveFromListBox(item);
+            Controller.RemoveFromListBox(item);
         }
 
         public void SelectItemWithDeselect(Point location)
@@ -131,7 +139,7 @@ namespace ThePainterFormsTest.Models
                 _tempItem.Resize(begin, end);
             }
 
-            Controller.Instance.InvalidateCanvas();
+            Controller.InvalidateCanvas();
         }
 
         public void IsMoving(Point begin, Point end)
@@ -140,7 +148,7 @@ namespace ThePainterFormsTest.Models
             {
                 _tempItem.Move(begin, end);
 
-                Controller.Instance.InvalidateCanvas();
+                Controller.InvalidateCanvas();
             }
         }
 
@@ -150,7 +158,7 @@ namespace ThePainterFormsTest.Models
             {
                 _tempItem.Resize(begin, end);
 
-                Controller.Instance.InvalidateCanvas();
+                Controller.InvalidateCanvas();
             }            
         }
 
@@ -196,6 +204,11 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+        public void OpenFileToCanvas(string path)
+        {
+            PushHistory(new OpenFile(path));
+        }
+
         public void OpenFile(string path)
         {
             List<DrawableItem> readedItems = FileParser.Instance.ReadFile(path);
@@ -203,10 +216,18 @@ namespace ThePainterFormsTest.Models
             if(readedItems != null)
             {
                 _items.Clear();
-                Controller.Instance.ClearListBox();
+                Controller.ClearListBox();
+
                 _items.AddRange(readedItems);
-                Controller.Instance.AddToListBox(_items);
+
+                Controller.AddToListBox(_items);
+                Controller.InvalidateCanvas();
             }
+        }
+
+        public void SaveCanvasToFile(string path)
+        {
+            PushHistory(new SaveFile(path));
         }
 
         public void SaveFile(string path)
@@ -215,10 +236,49 @@ namespace ThePainterFormsTest.Models
             {
                 if(MessageBox.Show("Bestand succesvol opgeslagen\n Wilt u het canvas legen?", "The Painter", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    _items.Clear();
-                    Controller.Instance.ClearListBox();
+                    Clear();
                 }
             }
+        }
+
+        public List<DrawableItem> GetTempData(out Stack<ICommand> history, out Stack<ICommand> redoHistory, out DrawableItem selectedItem)
+        {
+            history = new Stack<ICommand>(_history);
+            redoHistory = new Stack<ICommand>(_redoHistory);
+            selectedItem = SelectedItem;
+
+            return new List<DrawableItem>(_items);
+        }
+
+        public void SetTempData(List<DrawableItem> items, Stack<ICommand> history, Stack<ICommand> redoHistory, DrawableItem selectedItem)
+        {
+            _history = history;
+            _redoHistory = redoHistory;
+
+            _items = items;
+            _selectedItem = selectedItem;
+
+            Controller.ClearListBox();
+            Controller.AddToListBox(_items);
+
+            Controller.InvalidateCanvas();
+        }
+
+        public void Clear()
+        {
+            PushHistory(new ClearCanvas());
+        }
+
+        public void ClearCanvas()
+        {
+            _items.Clear();
+            _selectedItem = null;
+            _tempItem = null;
+            _history.Clear();
+            _redoHistory.Clear();
+
+            Controller.ClearListBox();
+            Controller.InvalidateCanvas();
         }
 
         private void SetButtonClicked()
@@ -226,12 +286,13 @@ namespace ThePainterFormsTest.Models
             Color rectangleColor = DrawingMode == Mode.Rectange ? Color.DarkGray : Color.FromKnownColor(KnownColor.Control);
             Color ellipseColor = DrawingMode == Mode.Ellipse ? Color.DarkGray : Color.FromKnownColor(KnownColor.Control);
 
-            Controller.Instance.SetButtonCLickedColors(rectangleColor, ellipseColor);
+            Controller.SetButtonCLickedColors(rectangleColor, ellipseColor);
         }
 
         #region History
 
         private Stack<ICommand> _history = new Stack<ICommand>();
+
         private Stack<ICommand> _redoHistory = new Stack<ICommand>();
 
         private void PushHistory(ICommand command)
@@ -276,6 +337,7 @@ namespace ThePainterFormsTest.Models
                 _redoHistory.Push(command);
             }
         }
+
 
         #endregion
 
