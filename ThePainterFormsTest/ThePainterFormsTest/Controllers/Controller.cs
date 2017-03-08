@@ -50,6 +50,11 @@ namespace ThePainterFormsTest.Controllers
             Application.Run(_form);
         }
 
+        private void Canvas_Paint(object sender, PaintEventArgs e)
+        {
+            _canvas.Draw(e.Graphics);
+        }
+
         private void SaveFileButton_Click(object sender, EventArgs e)
         {
             
@@ -105,7 +110,6 @@ namespace ThePainterFormsTest.Controllers
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
-            listBox.Items.Clear();
 
             listBox.Items.Add(item);
 
@@ -116,19 +120,11 @@ namespace ThePainterFormsTest.Controllers
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
-            listBox.Items.Clear();
 
             listBox.Items.Remove(item);
 
             listBox.EndUpdate();
         }
-
-        private void Canvas_Paint(object sender, PaintEventArgs e)
-        {
-            _canvas.Draw(e.Graphics);
-            e.Graphics.Dispose();
-        }
-
 
         private Point _begin = Point.Empty;
         private Point _deltaBegin = Point.Empty;

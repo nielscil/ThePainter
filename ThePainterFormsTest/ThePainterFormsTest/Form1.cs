@@ -12,11 +12,11 @@ namespace ThePainterFormsTest
 {
     public partial class Form1 : Form
     {
-        public Panel Canvas
+        public PictureBox Canvas
         {
             get
             {
-                return canvas;
+                return pictureBox1;
             }
         }
 
