@@ -47,6 +47,7 @@ namespace ThePainterFormsTest.Controllers
             _form.KeyDown += _form_KeyDown;
             _form.OpenFileButton.Click += OpenFileButton_Click;
             _form.SaveFileButton.Click += SaveFileButton_Click;
+            _form.ListBox.SelectionMode = SelectionMode.MultiExtended;
             Application.Run(_form);
         }
 
@@ -116,6 +117,19 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
+        public void AddToListBox(List<DrawableItem> items)
+        {
+            ListBox listBox = _form.ListBox;
+            listBox.BeginUpdate();
+
+            foreach(var item in items)
+            {
+                listBox.Items.Add(item);
+            }
+
+            listBox.EndUpdate();
+        }
+
         public void RemoveFromListBox(DrawableItem item)
         {
             ListBox listBox = _form.ListBox;
@@ -124,6 +138,24 @@ namespace ThePainterFormsTest.Controllers
             listBox.Items.Remove(item);
 
             listBox.EndUpdate();
+        }
+
+        public void RemoveFromListBox(List<DrawableItem> items)
+        {
+            ListBox listBox = _form.ListBox;
+            listBox.BeginUpdate();
+
+            foreach (var item in items)
+            {
+                listBox.Items.Remove(item);
+            }
+
+            listBox.EndUpdate();
+        }
+
+        public void ClearListBox()
+        {
+            _form.ListBox.Items.Clear();
         }
 
         private Point _begin = Point.Empty;

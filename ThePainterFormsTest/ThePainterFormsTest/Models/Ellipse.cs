@@ -23,7 +23,7 @@ namespace ThePainterFormsTest.Models
 
         public override string ToString()
         {
-            return "Ellipse " + base.ToString();
+            return "Ellipse";
         }
     }
 }

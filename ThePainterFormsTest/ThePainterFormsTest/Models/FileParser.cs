@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ThePainterFormsTest.Models
 {
@@ -32,10 +33,11 @@ namespace ThePainterFormsTest.Models
 
         private FileParser() { }
 
-        public Canvas ReadFile(string path)
+        public List<DrawableItem> ReadFile(string path)
         {
             if(!File.Exists(path))
             {
+                MessageBox.Show("File not found!", "The Painter", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
 
@@ -65,7 +67,7 @@ namespace ThePainterFormsTest.Models
                     switch(array[0])
                     {
                         case GROUP:
-
+                 
                             break;
                         case ORNAMENT:
 

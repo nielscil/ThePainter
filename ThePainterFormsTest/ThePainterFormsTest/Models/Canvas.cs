@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using ThePainterFormsTest.Commands;
 using ThePainterFormsTest.Controllers;
 
@@ -26,7 +27,6 @@ namespace ThePainterFormsTest.Models
             {
                 if(value == null)
                 {
-                    _items.Add(_selectedItem);
                     _tempItem = null;
                 }
 
@@ -35,7 +35,6 @@ namespace ThePainterFormsTest.Models
                 if(_selectedItem != null)
                 {
                     _tempItem = _selectedItem.Clone();
-                    _items.Remove(_selectedItem);
                 }
             }
         }
@@ -194,6 +193,31 @@ namespace ThePainterFormsTest.Models
             if (HasSelected)
             {
                 PushHistory(new MoveItem(SelectedItem, begin, end));
+            }
+        }
+
+        public void OpenFile(string path)
+        {
+            List<DrawableItem> readedItems = FileParser.Instance.ReadFile(path);
+
+            if(readedItems != null)
+            {
+                _items.Clear();
+                Controller.Instance.ClearListBox();
+                _items.AddRange(readedItems);
+                Controller.Instance.AddToListBox(_items);
+            }
+        }
+
+        public void SaveFile(string path)
+        {
+            if(FileParser.Instance.WriteFile(path, _items))
+            {
+                if(MessageBox.Show("Bestand succesvol opgeslagen\n Wilt u het canvas legen?", "The Painter", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    _items.Clear();
+                    Controller.Instance.ClearListBox();
+                }
             }
         }
 

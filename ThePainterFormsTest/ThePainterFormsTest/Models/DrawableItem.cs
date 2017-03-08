@@ -115,10 +115,5 @@ namespace ThePainterFormsTest.Models
 
             return item;
         }
-
-        public override string ToString()
-        {
-            return string.Format("(x: {0},y: {0},w: {0}, h: {0})",_x,_y,_width,_height);
-        }
     }
 }
