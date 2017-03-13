@@ -72,22 +72,12 @@ namespace ThePainterFormsTest.Controllers
             _form.ClearCanvasButton.Click += ClearCanvasButton_Click;
         }
 
+        private bool _listBoxHasFocus = false;
         private void SetListBoxEventListeners()
         {
-            _form.ListBox.GotFocus += ListBox_GotFocus;
-            _form.ListBox.LostFocus += ListBox_LostFocus;
+            _form.ListBox.GotFocus += (s, e) => { _listBoxHasFocus = true; };
+            _form.ListBox.LostFocus += (s, e) => { _listBoxHasFocus = false; };
             _form.ListBox.SelectedValueChanged += ListBox_SelectedValueChanged;
-        }
-
-        private void ListBox_LostFocus(object sender, EventArgs e)
-        {
-            _listBoxHasFocus = false;
-        }
-
-        private bool _listBoxHasFocus = false;
-        private void ListBox_GotFocus(object sender, EventArgs e)
-        {
-            _listBoxHasFocus = true;
         }
 
         private void ListBox_SelectedValueChanged(object sender, EventArgs e)
@@ -101,7 +91,7 @@ namespace ThePainterFormsTest.Controllers
                     _canvas.SelectItemWithDeselect((ICanvasItem)lb.SelectedItems[0]);
                 }
 
-                if (lb.SelectedItems.Count == 0)
+                if (lb.SelectedItems.Count == 0 || lb.SelectedItems.Count > 1)
                 {
                     _canvas.DeSelect();
                 }
@@ -247,7 +237,7 @@ namespace ThePainterFormsTest.Controllers
                 {
                     _form.ListBox.SelectedItems.Add(item);
                 }
-                else
+                else if(_form.ListBox.SelectedItems.Count == 1)
                 {
                     _form.ListBox.SelectedItems.Remove(item);
                 }
