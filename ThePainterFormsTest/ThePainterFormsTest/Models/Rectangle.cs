@@ -9,9 +9,15 @@ namespace ThePainterFormsTest.Models
 {
     public class Rectangle : DrawableItem
     {
-        public const string Name = "rectangle";
+        public override string Name
+        {
+            get
+            {
+                return "rectangle";
+            }
+        }
 
-        public Rectangle(int x, int y, int width, int height) : base(x, y, width, height, Name) { }
+        public Rectangle(int x, int y, int width, int height) : base(x, y, width, height) { }
 
         public override void Draw(Graphics graphics)
         {

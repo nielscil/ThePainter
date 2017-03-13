@@ -22,10 +22,10 @@ namespace ThePainterFormsTest.Models
 
         public enum Mode { Rectange, Ellipse };
 
-        private List<DrawableItem> _items = new List<DrawableItem>();
+        private List<ICanvasItem> _items = new List<ICanvasItem>();
 
-        private DrawableItem _selectedItem = null;
-        public DrawableItem SelectedItem
+        private ICanvasItem _selectedItem = null;
+        public ICanvasItem SelectedItem
         {
             get
             {
@@ -33,19 +33,32 @@ namespace ThePainterFormsTest.Models
             }
             set
             {
-                if(value == null)
+                Controller.EnableRemoveGroupButton(false);
+
+                if (value == null)
                 {
+                    
                     _tempItem = null;
                 }
 
+                Controller.SelectInListBox(_selectedItem, false);
+
                 _selectedItem = value;
 
-                if(_selectedItem != null)
+                Controller.SelectInListBox(_selectedItem, true);
+
+                if (_selectedItem != null)
                 {
                     _tempItem = _selectedItem.Clone();
+                    
+                    if (_selectedItem is Group)
+                    {
+                        Controller.EnableRemoveGroupButton(true);
+                    }
                 }
             }
         }
+
         public bool HasSelected
         {
             get
@@ -79,13 +92,13 @@ namespace ThePainterFormsTest.Models
             PushHistory(new ChangeDrawingMode(mode));
         }
 
-        public void AddItem(DrawableItem item)
+        public void AddItem(ICanvasItem item)
         {
             _items.Add(item);
             Controller.AddToListBox(item);
         }
 
-        public void RemoveItem(DrawableItem item)
+        public void RemoveItem(ICanvasItem item)
         {
             _items.Remove(item);
             Controller.RemoveFromListBox(item);
@@ -108,6 +121,19 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+        public void SelectItemWithDeselect(ICanvasItem item)
+        {
+            PushHistory(new SelectItemWithDeselect(item));
+        }
+
+        public void DeSelect()
+        {
+            if(_selectedItem != null)
+            {
+                PushHistory(new DeselectItem(_selectedItem));
+            }
+        }
+
         public void Draw(Graphics graphics)
         {
             foreach(var item in _items)
@@ -119,7 +145,7 @@ namespace ThePainterFormsTest.Models
 
         #region For Showing animation while changing
 
-        private DrawableItem _tempItem = null;
+        private ICanvasItem _tempItem = null;
         public void IsCreating(Point begin, Point end)
         {
             if(_tempItem == null)
@@ -211,7 +237,7 @@ namespace ThePainterFormsTest.Models
 
         public void OpenFile(string path)
         {
-            List<DrawableItem> readedItems = FileParser.Instance.ReadFile(path);
+            List<ICanvasItem> readedItems = FileParser.Instance.ReadFile(path);
 
             if(readedItems != null)
             {
@@ -241,16 +267,16 @@ namespace ThePainterFormsTest.Models
             }
         }
 
-        public List<DrawableItem> GetTempData(out Stack<ICommand> history, out Stack<ICommand> redoHistory, out DrawableItem selectedItem)
+        public List<ICanvasItem> GetTempData(out Stack<ICommand> history, out Stack<ICommand> redoHistory, out ICanvasItem selectedItem)
         {
             history = new Stack<ICommand>(_history);
             redoHistory = new Stack<ICommand>(_redoHistory);
             selectedItem = SelectedItem;
 
-            return new List<DrawableItem>(_items);
+            return new List<ICanvasItem>(_items);
         }
 
-        public void SetTempData(List<DrawableItem> items, Stack<ICommand> history, Stack<ICommand> redoHistory, DrawableItem selectedItem)
+        public void SetTempData(List<ICanvasItem> items, Stack<ICommand> history, Stack<ICommand> redoHistory, ICanvasItem selectedItem)
         {
             _history = history;
             _redoHistory = redoHistory;

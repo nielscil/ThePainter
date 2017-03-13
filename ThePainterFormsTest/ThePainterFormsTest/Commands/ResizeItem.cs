@@ -12,9 +12,9 @@ namespace ThePainterFormsTest.Commands
     class ResizeItem : ICommand
     {
         private int _width, _height, _oldWith, _oldHeight;
-        private DrawableItem _item;
+        private ICanvasItem _item;
 
-        public ResizeItem(DrawableItem item, Point begin, Point end)
+        public ResizeItem(ICanvasItem item, Point begin, Point end)
         {
             _width += end.X - begin.X + item.Width;
             _height += end.Y - begin.Y + item.Height;

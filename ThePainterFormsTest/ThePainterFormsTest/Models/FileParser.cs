@@ -36,7 +36,7 @@ namespace ThePainterFormsTest.Models
 
         #region Parser
 
-        public List<DrawableItem> ReadFile(string path)
+        public List<ICanvasItem> ReadFile(string path)
         {
             if (!File.Exists(path))
             {
@@ -52,9 +52,9 @@ namespace ThePainterFormsTest.Models
             }
         }
 
-        private List<DrawableItem> Parser(StreamReader reader)
+        private List<ICanvasItem> Parser(StreamReader reader)
         {
-            List<DrawableItem> items = new List<DrawableItem>();
+            List<ICanvasItem> items = new List<ICanvasItem>();
 
             while(!reader.EndOfStream)
             {
@@ -170,7 +170,7 @@ namespace ThePainterFormsTest.Models
 
         #region Writer
 
-        public bool WriteFile(string path, List<DrawableItem> items)
+        public bool WriteFile(string path, List<ICanvasItem> items)
         {
             try
             {
@@ -188,7 +188,7 @@ namespace ThePainterFormsTest.Models
             return true;
         }
 
-        private string SerializeItems(List<DrawableItem> items)
+        private string SerializeItems(List<ICanvasItem> items)
         {
             string serialized = "";
 
@@ -200,7 +200,7 @@ namespace ThePainterFormsTest.Models
             return serialized;
         }
 
-        private string GetSerializedItem(DrawableItem item, string prefix = "")
+        private string GetSerializedItem(ICanvasItem item, string prefix = "")
         {
             switch (item.ToString())
             {
@@ -217,7 +217,7 @@ namespace ThePainterFormsTest.Models
             throw new Exception("No object found");
         }
 
-        private string SerializeGroup(DrawableItem item, string prefix = "")
+        private string SerializeGroup(ICanvasItem item, string prefix = "")
         {
             string serialized = "";
 
@@ -230,7 +230,7 @@ namespace ThePainterFormsTest.Models
             return serialized;
         }
 
-        private string Serialize(DrawableItem item)
+        private string Serialize(ICanvasItem item)
         {
             return item.Serialize();
         }

@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Models
 {
-    public abstract class DrawableItem
+    public abstract class DrawableItem : ICanvasItem
     {
-        private string _name;
-
         protected int _x;
         public int X
         {
@@ -49,13 +46,14 @@ namespace ThePainterFormsTest.Models
 
         public Color Color { get; set; } = Color.Black;
 
-        public DrawableItem(int x, int y, int width, int height, string name)
+        public abstract string Name { get; }
+
+        public DrawableItem(int x, int y, int width, int height)
         {
             _x = x;
             _y = y;
-            _height = height;
             _width = width;
-            _name = name;
+            _height = height;
         }
 
         public void Resize(Point begin, Point end)
@@ -103,12 +101,12 @@ namespace ThePainterFormsTest.Models
 
         public string Serialize()
         {
-            return $"{_name} {_x} {_y} {_width} {_height}";
+            return $"{Name} {_x} {_y} {_width} {_height}";
         }
 
-        public DrawableItem Clone()
+        public ICanvasItem Clone()
         {
-            DrawableItem item = null;
+            ICanvasItem item = null;
 
             if(this is Ellipse)
             {
@@ -126,7 +124,7 @@ namespace ThePainterFormsTest.Models
 
         public override string ToString()
         {
-            return _name;
+            return Name;
         }
     }
 }

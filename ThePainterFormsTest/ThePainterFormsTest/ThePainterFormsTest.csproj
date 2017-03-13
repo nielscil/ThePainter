@@ -66,9 +66,11 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Canvas.cs" />
+    <Compile Include="Models\ICanvasItem.cs" />
     <Compile Include="Models\DrawableItem.cs" />
     <Compile Include="Models\Ellipse.cs" />
     <Compile Include="Models\FileParser.cs" />
+    <Compile Include="Models\Group.cs" />
     <Compile Include="Models\Rectangle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

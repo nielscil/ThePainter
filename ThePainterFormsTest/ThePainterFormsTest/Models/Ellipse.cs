@@ -9,9 +9,15 @@ namespace ThePainterFormsTest.Models
 {
     class Ellipse : DrawableItem
     {
-        public const string Name = "ellipse";
+        public override string Name
+        {
+            get
+            {
+                return "ellipse";
+            }
+        }
 
-        public Ellipse(int x, int y, int width, int height) : base(x, y, width, height, Name) { }
+        public Ellipse(int x, int y, int width, int height) : base(x, y, width, height) { }
 
         public override void Draw(Graphics graphics)
         {

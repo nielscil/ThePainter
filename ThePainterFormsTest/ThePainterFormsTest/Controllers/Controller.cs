@@ -39,6 +39,8 @@ namespace ThePainterFormsTest.Controllers
             SetCanvas();
 
             SetButtonEventListeners();
+
+            SetListBoxEventListeners();
               
             Application.Run(_form);
         }
@@ -68,6 +70,42 @@ namespace ThePainterFormsTest.Controllers
             _form.SaveFileButton.Click += SaveFileButton_Click;
 
             _form.ClearCanvasButton.Click += ClearCanvasButton_Click;
+        }
+
+        private void SetListBoxEventListeners()
+        {
+            _form.ListBox.GotFocus += ListBox_GotFocus;
+            _form.ListBox.LostFocus += ListBox_LostFocus;
+            _form.ListBox.SelectedValueChanged += ListBox_SelectedValueChanged;
+        }
+
+        private void ListBox_LostFocus(object sender, EventArgs e)
+        {
+            _listBoxHasFocus = false;
+        }
+
+        private bool _listBoxHasFocus = false;
+        private void ListBox_GotFocus(object sender, EventArgs e)
+        {
+            _listBoxHasFocus = true;
+        }
+
+        private void ListBox_SelectedValueChanged(object sender, EventArgs e)
+        {   
+            if(_listBoxHasFocus)
+            {
+                ListBox lb = (ListBox)sender;
+
+                if (lb.SelectedItems.Count == 1)
+                {
+                    _canvas.SelectItemWithDeselect((ICanvasItem)lb.SelectedItems[0]);
+                }
+
+                if (lb.SelectedItems.Count == 0)
+                {
+                    _canvas.DeSelect();
+                }
+            }
         }
 
         private void ClearCanvasButton_Click(object sender, EventArgs e)
@@ -134,19 +172,20 @@ namespace ThePainterFormsTest.Controllers
             _canvas.SetDrawingMode(Canvas.Mode.Rectange);
         }
 
+
+
         public void SetButtonCLickedColors(Color rectangleColor, Color ellipseColor)
         {
             _form.EllipseButton.BackColor = ellipseColor;
             _form.RectangleButton.BackColor = rectangleColor;
         }
 
-
         public void InvalidateCanvas()
         {
             _form.Canvas.Invalidate();
         }
 
-        public void AddToListBox(DrawableItem item)
+        public void AddToListBox(ICanvasItem item)
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
@@ -156,7 +195,7 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
-        public void AddToListBox(List<DrawableItem> items)
+        public void AddToListBox(List<ICanvasItem> items)
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
@@ -169,7 +208,7 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
-        public void RemoveFromListBox(DrawableItem item)
+        public void RemoveFromListBox(ICanvasItem item)
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
@@ -179,7 +218,7 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
-        public void RemoveFromListBox(List<DrawableItem> items)
+        public void RemoveFromListBox(List<ICanvasItem> items)
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
@@ -192,14 +231,43 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
+        public void SelectInListBox(ICanvasItem item, bool value)
+        {
+            if (item == null)
+                return;
+
+            bool oldValue = _listBoxHasFocus;
+            _listBoxHasFocus = false;
+
+
+            int index = _form.ListBox.Items.IndexOf(item);
+            if(index >= 0)
+            {
+                if(value)
+                {
+                    _form.ListBox.SelectedItems.Add(item);
+                }
+                else
+                {
+                    _form.ListBox.SelectedItems.Remove(item);
+                }
+            }
+
+            _listBoxHasFocus = oldValue;
+        }
+
         public void ClearListBox()
         {
             _form.ListBox.Items.Clear();
         }
 
+        public void EnableRemoveGroupButton(bool enabled)
+        {
+            _form.RemoveGroupButton.Enabled = enabled;
+        }
+
         private Point _begin = Point.Empty;
         private Point _deltaBegin = Point.Empty;
-
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && !_canvas.HasSelected)

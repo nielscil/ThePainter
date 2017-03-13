@@ -62,9 +62,9 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBox1.Location = new System.Drawing.Point(1132, 378);
             this.listBox1.Name = "listBox1";
+            this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBox1.Size = new System.Drawing.Size(260, 212);
             this.listBox1.TabIndex = 3;
             // 
@@ -89,7 +89,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(1, 0);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(1126, 617);
             this.pictureBox1.TabIndex = 6;
@@ -106,6 +106,7 @@
             // 
             // button6
             // 
+            this.button6.Enabled = false;
             this.button6.Location = new System.Drawing.Point(1268, 106);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(130, 40);

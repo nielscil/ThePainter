@@ -10,9 +10,9 @@ namespace ThePainterFormsTest.Commands
 {
     class DeselectItem : ICommand
     {
-        private DrawableItem _item;
+        private ICanvasItem _item;
 
-        public DeselectItem(DrawableItem item)
+        public DeselectItem(ICanvasItem item)
         {
             _item = item;
         }
