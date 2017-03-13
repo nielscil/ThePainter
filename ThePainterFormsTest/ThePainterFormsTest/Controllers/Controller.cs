@@ -70,6 +70,25 @@ namespace ThePainterFormsTest.Controllers
             _form.SaveFileButton.Click += SaveFileButton_Click;
 
             _form.ClearCanvasButton.Click += ClearCanvasButton_Click;
+            _form.AddGroupButton.Click += AddGroupButton_Click;
+            _form.RemoveGroupButton.Click += RemoveGroupButton_Click;
+        }
+
+        private void RemoveGroupButton_Click(object sender, EventArgs e)
+        {
+            _canvas.RemoveGroup();
+        }
+
+        private void AddGroupButton_Click(object sender, EventArgs e)
+        {
+            List<ICanvasItem> items = new List<ICanvasItem>();
+
+            foreach(var item in _form.ListBox.SelectedItems)
+            {
+                items.Add((ICanvasItem)item);
+            }
+
+            _canvas.AddGroup(items);   
         }
 
         private bool _listBoxHasFocus = false;

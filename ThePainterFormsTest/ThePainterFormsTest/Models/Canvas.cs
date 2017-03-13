@@ -87,6 +87,19 @@ namespace ThePainterFormsTest.Models
             DrawingMode = Mode.Rectange;
         }
 
+        public void AddGroup(IList<ICanvasItem> selectedItems)
+        {
+            //TODO: add group
+        }
+
+        public void RemoveGroup()
+        {
+            if(SelectedItem is Group)
+            {
+                //TODO: remove group
+            }
+        }
+
         public void SetDrawingMode(Mode mode)
         {
             PushHistory(new ChangeDrawingMode(mode));
