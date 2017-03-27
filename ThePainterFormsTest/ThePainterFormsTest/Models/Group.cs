@@ -7,134 +7,173 @@ using System.Threading.Tasks;
 
 namespace ThePainterFormsTest.Models
 {
-    class Group : ICanvasItem
+    public class Group : DrawableItem
     {
-
-        public int X
-        {
-            get
-            {
-                return 0; //TODO: calculate lazy x,y,width,height from subitems
-            }
-        }
-
-        public int Y
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        public int Width
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        public int Height
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
-        public Color Color { get; set; }
-
-        public string Name
+        public override string Name
         {
             get
             {
                 return "group";
             }
         }
+        public List<DrawableItem> Items
+        {
+            get
+            {
+                return new List<DrawableItem>(_subItems);
+            }
+        }
 
-        private List<ICanvasItem> _subItems;
+        private List<DrawableItem> _subItems = new List<DrawableItem>();
 
         public Group()
         {
-            _subItems = new List<ICanvasItem>();
+            _subItems = new List<DrawableItem>();
         }
 
-        public ICanvasItem Clone()
+        public Group(List<DrawableItem> items)
         {
-            throw new NotImplementedException();
+            _subItems = new List<DrawableItem>(items);
+      
+            CalculatePositions();
         }
 
-        public void Deselect()
+        public void AddItem(DrawableItem item)
         {
-            Color = Color.Black;
+            _subItems.Add(item);
+
+            CalculatePositions();
         }
 
-        public void Draw(Graphics graphics)
+        public void RemoveItem(DrawableItem item)
+        {
+            _subItems.Remove(item);
+
+            CalculatePositions();
+        }
+
+        public override void Deselect()
+        {
+            base.Deselect();
+            
+            foreach(var item in _subItems)
+            {
+                item.Deselect();
+            }
+        }
+
+        public override void Select()
+        {
+            base.Select();
+
+            foreach(var item in _subItems)
+            {
+                item.Select();
+            }
+
+            CalculatePositions();
+        }
+
+        public override void Draw(Graphics graphics)
         {
             foreach(var item in _subItems)
             {
                 item.Draw(graphics);
             }
-
-            if(Color == Color.Red)
-            {
-                using (Pen p = new Pen(Color))
-                {
-                    graphics.DrawLine(p, X, Y, X + Width, Y);
-                    graphics.DrawLine(p, X, Y, X, Y + Height);
-                    graphics.DrawLine(p, X + Width, Y, X + Width, Y + Height);
-                    graphics.DrawLine(p, X, Y + Height, X + Width, Y + Height);
-                }
-            }
         }
 
-        public bool IsOnLocation(Point point)
+        public override void Move(int x, int y)
         {
-            bool isXInItem = (point.X >= X && point.X <= X + Width) || (point.X >= X + Width && point.X <= X);
-            bool isYInItem = (point.Y >= Y && point.Y <= Y + Height) || (point.Y >= Y + Height && point.Y <= Y);
-            return isXInItem && isYInItem;
-        }
-
-        public void Move(int x, int y)
-        {
+            int xDiff = x - X;
+            int yDiff = y - Y;
             foreach (var item in _subItems)
             {
-                item.Move(x, y);
+                item.Move(item.X + xDiff, item.Y + yDiff);
             }
+
+            CalculatePositions();
         }
 
-        public void Move(Point begin, Point end)
+        public override void Move(Point begin, Point end)
         {
             foreach(var item in _subItems)
             {
                 item.Move(begin, end);
             }
+
+            CalculatePositions();
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
+            int widthDiff = width - Width;
+            int heightDiff = height - Height;
             foreach (var item in _subItems)
             {
-                item.Resize(width, height);
+                item.Resize(item.Width + widthDiff, item.Height + heightDiff);
             }
+
+            CalculatePositions();
         }
 
-        public void Resize(Point begin, Point end)
+        public override void Resize(Point begin, Point end)
         {
             foreach (var item in _subItems)
             {
                 item.Resize(begin, end);
             }
+
+            CalculatePositions();
         }
 
-        public void Select()
+        public override string Serialize(string prefix)
         {
-            Color = Color.Red;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{prefix}group {_subItems.Count}");
+
+            prefix += "\t";
+
+            foreach(var item in _subItems)
+            {
+                sb.AppendLine(item.Serialize(prefix));
+            }
+
+            return sb.ToString().TrimEnd();
         }
 
-        public string Serialize()
+        public override DrawableItem Clone()
         {
-            throw new NotImplementedException();
+            List<DrawableItem> items = new List<DrawableItem>();
+            foreach(var item in _subItems)
+            {
+                items.Add(item.Clone());
+            }
+
+            Group group = new Group(items);
+            group.Color = Color;
+            return group;
+        }
+
+        private void CalculatePositions()
+        {
+            int x = int.MaxValue;
+            int y = int.MaxValue;
+            int width = 0;
+            int heigth = 0;
+
+            foreach(var item in _subItems)
+            {
+                x = item.X < x ? item.X : x;
+                y = item.Y < y ? item.Y : y;
+
+                width = (item.X + item.Width) > width ? item.X + item.Width : width;
+                heigth = (item.Y + item.Height) > heigth ? item.Y + item.Height : heigth;
+            }
+
+            _x = x;
+            _y = y;
+            _width = width;
+            _height = heigth;
         }
     }
 }

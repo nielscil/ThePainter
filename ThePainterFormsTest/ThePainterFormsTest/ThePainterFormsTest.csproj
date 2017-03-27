@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AddEllipse.cs" />
+    <Compile Include="Commands\AddGroup.cs" />
     <Compile Include="Commands\AddRectangle.cs" />
     <Compile Include="Commands\ChangeDrawingMode.cs" />
     <Compile Include="Commands\ClearCanvas.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\MoveItem.cs" />
     <Compile Include="Commands\OpenFile.cs" />
+    <Compile Include="Commands\RemoveGroup.cs" />
     <Compile Include="Commands\ResizeItem.cs" />
     <Compile Include="Commands\SaveFile.cs" />
     <Compile Include="Commands\SelectItem.cs" />
@@ -66,7 +68,6 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Canvas.cs" />
-    <Compile Include="Models\ICanvasItem.cs" />
     <Compile Include="Models\DrawableItem.cs" />
     <Compile Include="Models\Ellipse.cs" />
     <Compile Include="Models\FileParser.cs" />
@@ -99,9 +100,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -12,9 +12,9 @@ namespace ThePainterFormsTest.Commands
     class MoveItem : ICommand
     {
         private int _x, _y, _oldX, _oldY;
-        private ICanvasItem _item;
+        private DrawableItem _item;
 
-        public MoveItem(ICanvasItem item, Point begin, Point end)
+        public MoveItem(DrawableItem item, Point begin, Point end)
         {
             _x = end.X - begin.X + item.X;
             _y = end.Y - begin.Y + item.Y;

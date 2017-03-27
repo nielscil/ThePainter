@@ -8,10 +8,10 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Models
 {
-    public abstract class DrawableItem : ICanvasItem
+    public abstract class DrawableItem
     {
         protected int _x;
-        public int X
+        public virtual int X
         {
             get
             {
@@ -20,7 +20,7 @@ namespace ThePainterFormsTest.Models
         }
 
         protected int _y;
-        public int Y
+        public virtual int Y
         {
             get
             {
@@ -28,7 +28,7 @@ namespace ThePainterFormsTest.Models
             }
         }
         protected int _height;
-        public int Height
+        public virtual int Height
         {
             get
             {
@@ -36,7 +36,7 @@ namespace ThePainterFormsTest.Models
             }
         }
         protected int _width;
-        public int Width
+        public virtual int Width
         {
             get
             {
@@ -56,25 +56,27 @@ namespace ThePainterFormsTest.Models
             _height = height;
         }
 
-        public void Resize(Point begin, Point end)
+        public DrawableItem() { }
+
+        public virtual void Resize(Point begin, Point end)
         {
             _height += end.Y - begin.Y;
             _width += end.X - begin.X;
         }
 
-        public void Resize(int width, int height)
+        public virtual void Resize(int width, int height)
         {
             _width = width;
             _height = height;
         }
 
-        public void Move(Point begin, Point end)
+        public virtual void Move(Point begin, Point end)
         {
             _x += end.X - begin.X;
             _y += end.Y - begin.Y;
         }
 
-        public void Move(int x, int y)
+        public virtual void Move(int x, int y)
         {
             _x = x;
             _y = y;
@@ -82,45 +84,29 @@ namespace ThePainterFormsTest.Models
 
         public abstract void Draw(Graphics graphics);
 
-        public bool IsOnLocation(Point point)
+        public virtual bool IsOnLocation(Point point)
         {
             bool isXInItem = (point.X >= _x && point.X <= _x + _width) || (point.X >= _x + _width && point.X <= _x);
             bool isYInItem = (point.Y >= _y && point.Y <= _y + _height) || (point.Y >= _y + _height && point.Y <= _y);
             return isXInItem && isYInItem;
         }
 
-        public void Select()
+        public virtual void Select()
         {
             Color = Color.Red;
         }
 
-        public void Deselect()
+        public virtual void Deselect()
         {
             Color = Color.Black;
         }
 
-        public string Serialize()
+        public virtual string Serialize(string prefix)
         {
-            return $"{Name} {_x} {_y} {_width} {_height}";
+            return $"{prefix}{Name} {_x} {_y} {_width} {_height}";
         }
 
-        public ICanvasItem Clone()
-        {
-            ICanvasItem item = null;
-
-            if(this is Ellipse)
-            {
-                item = new Ellipse(this._x, this._y, this._width, this._height);
-            }
-            else
-            {
-                item = new Rectangle(this._x, this._y, this._width, this._height);
-            }
-
-            item.Color = this.Color;
-
-            return item;
-        }
+        public abstract DrawableItem Clone();
 
         public override string ToString()
         {

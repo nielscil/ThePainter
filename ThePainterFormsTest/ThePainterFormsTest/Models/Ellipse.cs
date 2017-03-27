@@ -26,5 +26,12 @@ namespace ThePainterFormsTest.Models
                 graphics.DrawEllipse(pen, _x, _y, _width, _height);
             }
         }
+
+        public override DrawableItem Clone()
+        {
+            Ellipse ellipse = new Ellipse(X, Y, Width, Height);
+            ellipse.Color = Color;
+            return ellipse;
+        }
     }
 }

@@ -81,11 +81,11 @@ namespace ThePainterFormsTest.Controllers
 
         private void AddGroupButton_Click(object sender, EventArgs e)
         {
-            List<ICanvasItem> items = new List<ICanvasItem>();
+            List<DrawableItem> items = new List<DrawableItem>();
 
             foreach(var item in _form.ListBox.SelectedItems)
             {
-                items.Add((ICanvasItem)item);
+                items.Add((DrawableItem)item);
             }
 
             _canvas.AddGroup(items);   
@@ -107,7 +107,7 @@ namespace ThePainterFormsTest.Controllers
 
                 if (lb.SelectedItems.Count == 1)
                 {
-                    _canvas.SelectItemWithDeselect((ICanvasItem)lb.SelectedItems[0]);
+                    _canvas.SelectItemWithDeselect((DrawableItem)lb.SelectedItems[0]);
                 }
 
                 if (lb.SelectedItems.Count == 0 || lb.SelectedItems.Count > 1)
@@ -194,7 +194,7 @@ namespace ThePainterFormsTest.Controllers
             _form.Canvas.Invalidate();
         }
 
-        public void AddToListBox(ICanvasItem item)
+        public void AddToListBox(DrawableItem item)
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
@@ -204,7 +204,17 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
-        public void AddToListBox(List<ICanvasItem> items)
+        public void AddToListBox(DrawableItem item, int index)
+        {
+            ListBox listBox = _form.ListBox;
+            listBox.BeginUpdate();
+
+            listBox.Items.Insert(index, item);
+
+            listBox.EndUpdate();
+        }
+
+        public void AddToListBox(List<DrawableItem> items)
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
@@ -217,7 +227,7 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
-        public void RemoveFromListBox(ICanvasItem item)
+        public void RemoveFromListBox(DrawableItem item)
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
@@ -227,7 +237,7 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
-        public void RemoveFromListBox(List<ICanvasItem> items)
+        public void RemoveFromListBox(List<DrawableItem> items)
         {
             ListBox listBox = _form.ListBox;
             listBox.BeginUpdate();
@@ -240,7 +250,7 @@ namespace ThePainterFormsTest.Controllers
             listBox.EndUpdate();
         }
 
-        public void SelectInListBox(ICanvasItem item, bool value)
+        public void SelectInListBox(DrawableItem item, bool value)
         {
             if (item == null)
                 return;

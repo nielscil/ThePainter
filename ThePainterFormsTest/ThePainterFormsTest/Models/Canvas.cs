@@ -22,10 +22,10 @@ namespace ThePainterFormsTest.Models
 
         public enum Mode { Rectange, Ellipse };
 
-        private List<ICanvasItem> _items = new List<ICanvasItem>();
+        private List<DrawableItem> _items = new List<DrawableItem>();
 
-        private ICanvasItem _selectedItem = null;
-        public ICanvasItem SelectedItem
+        private DrawableItem _selectedItem = null;
+        public DrawableItem SelectedItem
         {
             get
             {
@@ -87,17 +87,54 @@ namespace ThePainterFormsTest.Models
             DrawingMode = Mode.Rectange;
         }
 
-        public void AddGroup(IList<ICanvasItem> selectedItems)
+        public void AddGroup(IList<DrawableItem> selectedItems)
         {
-            //TODO: add group
+            if(selectedItems.Count > 0)
+            {
+                int index = _items.IndexOf(selectedItems[0]);
+
+                if (index != -1)
+                {
+                    PushHistory(new AddGroup(selectedItems, index));
+                }
+            }
+        }
+
+        public void AddGroup(Group group, int index)
+        {
+            _items.Insert(index, group);
+            
+            foreach(var item in group.Items)
+            {
+                _items.Remove(item);
+            }
+
+            Controller.Instance.AddToListBox(group, index);
         }
 
         public void RemoveGroup()
         {
             if(SelectedItem is Group)
             {
-                //TODO: remove group
+                PushHistory(new RemoveGroup(SelectedItem as Group));
             }
+        }
+
+        public int RemoveGroup(Group group)
+        {
+            int index = _items.IndexOf(group);
+            _items.Remove(group);
+
+            List<DrawableItem> items = group.Items;
+            items.Reverse();
+
+            foreach(var item in items)
+            {
+                _items.Insert(index, item);
+            }
+
+            Controller.Instance.RemoveFromListBox(group);
+            return index;
         }
 
         public void SetDrawingMode(Mode mode)
@@ -105,13 +142,13 @@ namespace ThePainterFormsTest.Models
             PushHistory(new ChangeDrawingMode(mode));
         }
 
-        public void AddItem(ICanvasItem item)
+        public void AddItem(DrawableItem item)
         {
             _items.Add(item);
             Controller.AddToListBox(item);
         }
 
-        public void RemoveItem(ICanvasItem item)
+        public void RemoveItem(DrawableItem item)
         {
             _items.Remove(item);
             Controller.RemoveFromListBox(item);
@@ -134,7 +171,7 @@ namespace ThePainterFormsTest.Models
             }
         }
 
-        public void SelectItemWithDeselect(ICanvasItem item)
+        public void SelectItemWithDeselect(DrawableItem item)
         {
             PushHistory(new SelectItemWithDeselect(item));
         }
@@ -158,7 +195,7 @@ namespace ThePainterFormsTest.Models
 
         #region For Showing animation while changing
 
-        private ICanvasItem _tempItem = null;
+        private DrawableItem _tempItem = null;
         public void IsCreating(Point begin, Point end)
         {
             if(_tempItem == null)
@@ -250,7 +287,7 @@ namespace ThePainterFormsTest.Models
 
         public void OpenFile(string path)
         {
-            List<ICanvasItem> readedItems = FileParser.Instance.ReadFile(path);
+            List<DrawableItem> readedItems = FileParser.Instance.ReadFile(path);
 
             if(readedItems != null)
             {
@@ -280,16 +317,16 @@ namespace ThePainterFormsTest.Models
             }
         }
 
-        public List<ICanvasItem> GetTempData(out Stack<ICommand> history, out Stack<ICommand> redoHistory, out ICanvasItem selectedItem)
+        public List<DrawableItem> GetTempData(out Stack<ICommand> history, out Stack<ICommand> redoHistory, out DrawableItem selectedItem)
         {
             history = new Stack<ICommand>(_history);
             redoHistory = new Stack<ICommand>(_redoHistory);
             selectedItem = SelectedItem;
 
-            return new List<ICanvasItem>(_items);
+            return new List<DrawableItem>(_items);
         }
 
-        public void SetTempData(List<ICanvasItem> items, Stack<ICommand> history, Stack<ICommand> redoHistory, ICanvasItem selectedItem)
+        public void SetTempData(List<DrawableItem> items, Stack<ICommand> history, Stack<ICommand> redoHistory, DrawableItem selectedItem)
         {
             _history = history;
             _redoHistory = redoHistory;

@@ -13,8 +13,8 @@ namespace ThePainterFormsTest.Commands
 
         Stack<ICommand> _history;
         Stack<ICommand> _redoHistory;
-        List<ICanvasItem> _tempdata;
-        ICanvasItem _selected;
+        List<DrawableItem> _tempdata;
+        DrawableItem _selected;
 
         public OpenFile(string filePath)
         {

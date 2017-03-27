@@ -30,5 +30,12 @@ namespace ThePainterFormsTest.Models
             }
                 
         }
+
+        public override DrawableItem Clone()
+        {
+            Rectangle rect = new Rectangle(X, Y, Width, Height);
+            rect.Color = Color;
+            return rect;
+        }
     }
 }

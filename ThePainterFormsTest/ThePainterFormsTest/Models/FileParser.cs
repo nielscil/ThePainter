@@ -36,7 +36,7 @@ namespace ThePainterFormsTest.Models
 
         #region Parser
 
-        public List<ICanvasItem> ReadFile(string path)
+        public List<DrawableItem> ReadFile(string path)
         {
             if (!File.Exists(path))
             {
@@ -52,33 +52,20 @@ namespace ThePainterFormsTest.Models
             }
         }
 
-        private List<ICanvasItem> Parser(StreamReader reader)
+        private List<DrawableItem> Parser(StreamReader reader)
         {
-            List<ICanvasItem> items = new List<ICanvasItem>();
+            List<DrawableItem> items = new List<DrawableItem>();
+
+            if(!reader.EndOfStream)
+            {
+                reader.ReadLine();
+            }
 
             while(!reader.EndOfStream)
             {
                 try
                 {
-                    Line++;
-                    string line = reader.ReadLine();
-                    string itemName = GetItem(line);
-
-                    switch (itemName)
-                    {
-                        case GROUP:
-                            //TODO: add group
-                            break;
-                        case ORNAMENT:
-                            //TODO: add text
-                            break;
-                        case ELLIPSE:
-                            items.Add(EllipseParser(line));
-                            break;
-                        case RECTANGLE:
-                            items.Add(RectangleParser(line));
-                            break;
-                    }
+                    items.Add(GetItem(reader));
                 }
                 catch(Exception e)
                 {
@@ -89,15 +76,82 @@ namespace ThePainterFormsTest.Models
             return items;
         }
 
+        private DrawableItem GetItem(StreamReader reader)
+        {
+            Line++;
+            string line = reader.ReadLine();
+            string itemName = GetItemName(line);
+
+            DrawableItem item = null;
+            switch (itemName)
+            {
+                case GROUP:
+                    item = GroupParser(reader, GetGroupItemCount(line));
+                    break;
+                case ORNAMENT:
+                    //TODO: add text
+                    break;
+                case ELLIPSE:
+                    item = EllipseParser(line);
+                    break;
+                case RECTANGLE:
+                    item = RectangleParser(line);
+                    break;
+                default:
+                    throw new Exception("Not Parsed");
+            }
+
+            return item;
+        }
+
         private void OrnamentParser(string line)
         {
 
         }
 
-        private void GroupParser(StreamReader reader)
+        private int GetGroupItemCount(string line)
         {
-            //do stuff
+            string[] splitted = line.Split(' ');
 
+            int count = 0;
+
+            if(splitted.Length == 2)
+            {
+                int.TryParse(splitted[1], out count);
+            }
+
+            return count;
+        }
+
+        private Group GroupParser(StreamReader reader, int count)
+        {
+            List<DrawableItem> items = new List<DrawableItem>();
+
+            for(int i = 0; i < count;)
+            {
+                DrawableItem item = GetItem(reader);
+                items.Add(item);
+
+                //if(!(item is Ornament)) //ornament does not count as figure!
+                //{
+                i++;
+                //}
+            }
+
+            return new Group(items);
+        }
+
+        private int CountTabs(string line)
+        {
+            int count = 0;
+            foreach(char c in line)
+            {
+                if (char.IsLetterOrDigit(c))
+                    break;
+                if (c == '\t')
+                    count++;
+            }
+            return count;
         }
 
         private Rectangle RectangleParser(string line)
@@ -142,13 +196,13 @@ namespace ThePainterFormsTest.Models
             throw new Exception($"Line[{Line}]: Could not parse Ellipse");
         }
 
-        private string GetItem(string line)
+        private string GetItemName(string line)
         {
             string[] lineArray = line.Split(' ');
             
             if(lineArray.Length > 0)
             {
-                return lineArray[0];
+                return lineArray[0].Trim();
             }
 
             throw new Exception($"Line[{Line}]: Item not found");
@@ -170,7 +224,7 @@ namespace ThePainterFormsTest.Models
 
         #region Writer
 
-        public bool WriteFile(string path, List<ICanvasItem> items)
+        public bool WriteFile(string path, List<DrawableItem> items)
         {
             try
             {
@@ -188,51 +242,14 @@ namespace ThePainterFormsTest.Models
             return true;
         }
 
-        private string SerializeItems(List<ICanvasItem> items)
+        private string SerializeItems(List<DrawableItem> items)
         {
             string serialized = "";
 
-            foreach(var item in items)
-            {
-                serialized += GetSerializedItem(item);
-            }
-
+            Group group = new Group(items);
+            serialized = group.Serialize(string.Empty);
+                
             return serialized;
-        }
-
-        private string GetSerializedItem(ICanvasItem item, string prefix = "")
-        {
-            switch (item.ToString())
-            {
-                case RECTANGLE:
-                    return prefix + Serialize(item) + Environment.NewLine;
-                case ELLIPSE:
-                    return prefix + Serialize(item) + Environment.NewLine;
-                case GROUP:
-                    return prefix + SerializeGroup(item, prefix) + Environment.NewLine;
-                case ORNAMENT:
-                    return prefix + Serialize(item) + Environment.NewLine;
-            }
-
-            throw new Exception("No object found");
-        }
-
-        private string SerializeGroup(ICanvasItem item, string prefix = "")
-        {
-            string serialized = "";
-
-            //add group
-            serialized += Serialize(item) + Environment.NewLine;
-            prefix += Environment.NewLine;
-
-            //add sub items with tab in front!
-
-            return serialized;
-        }
-
-        private string Serialize(ICanvasItem item)
-        {
-            return item.Serialize();
         }
 
         #endregion

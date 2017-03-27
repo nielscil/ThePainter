@@ -10,10 +10,10 @@ namespace ThePainterFormsTest.Commands
 {
     class SelectItemWithDeselect : ICommand
     {
-        private ICanvasItem _item;
-        private ICanvasItem _previousSelectedItem;
+        private DrawableItem _item;
+        private DrawableItem _previousSelectedItem;
 
-        public SelectItemWithDeselect(ICanvasItem item)
+        public SelectItemWithDeselect(DrawableItem item)
         {
             _item = item;
         }
@@ -32,13 +32,8 @@ namespace ThePainterFormsTest.Commands
         public void Undo(Canvas canvas)
         {
             _item.Deselect();
-            canvas.SelectedItem = null;
-
-            if(_previousSelectedItem != null)
-            { 
-                _previousSelectedItem.Select();
-                canvas.SelectedItem = _previousSelectedItem;
-            }
+            _previousSelectedItem?.Select();
+            canvas.SelectedItem = _previousSelectedItem;
 
             Controller.Instance.InvalidateCanvas();
         }
