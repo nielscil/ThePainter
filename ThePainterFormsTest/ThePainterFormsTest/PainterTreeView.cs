@@ -53,7 +53,8 @@ namespace ThePainterFormsTest
             }
         }
 
-        public Color SelectionColor { get; set; } = Color.Blue;
+        public Color SelectionColor { get; set; } = Color.FromArgb(51,153,255);
+        public Color SelectionForeColor { get; set; } = Color.White;
 
         public PainterTreeView()
         {
@@ -63,6 +64,7 @@ namespace ThePainterFormsTest
         private void SetEvents()
         {
             BeforeSelect += PainterTreeView_BeforeSelect;
+            AfterSelect += PainterTreeView_AfterSelect;
         }
 
         protected override void Dispose(bool disposing)
@@ -83,6 +85,7 @@ namespace ThePainterFormsTest
         private void ReleaseEvents()
         {
             BeforeSelect -= PainterTreeView_BeforeSelect;
+            AfterSelect -= PainterTreeView_AfterSelect;
         }
 
         private void PainterTreeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
@@ -95,9 +98,22 @@ namespace ThePainterFormsTest
                     RemoveSelection();
                 }
 
-                AddToSelection(e.Node);
+                if(IsInSelection(e.Node))
+                {
+                    RemoveFromSelection(e.Node);
+                }
+                else
+                {
+                    AddToSelection(e.Node);
+                }
+                
                 OnSelectionChanged();
             }
+        }
+
+        private void PainterTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            SelectedNode = null;
         }
 
         private void RemoveSelection()
@@ -105,8 +121,14 @@ namespace ThePainterFormsTest
             foreach(var item in SelectedItems)
             {
                 item.BackColor = DefaultBackColor;
+                item.ForeColor = DefaultForeColor;
             }
             SelectedItems.Clear();
+        }
+
+        private bool IsInSelection(TreeNode node)
+        {
+            return node is PainterTreeNode && SelectedItems.Contains(node as PainterTreeNode);
         }
 
         private void AddToSelection(TreeNode node)
@@ -115,6 +137,17 @@ namespace ThePainterFormsTest
             {
                 SelectedItems.Add(node as PainterTreeNode);
                 node.BackColor = SelectionColor;
+                node.ForeColor = SelectionForeColor;
+            }
+        }
+
+        private void RemoveFromSelection(TreeNode node)
+        {
+            if(node is PainterTreeNode)
+            {
+                node.BackColor = DefaultBackColor;
+                node.ForeColor = DefaultForeColor;
+                SelectedItems.Remove(node as PainterTreeNode);
             }
         }
     }

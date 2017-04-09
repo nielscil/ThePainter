@@ -30,14 +30,13 @@
         {
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
-            this.treeView = new PainterTreeView();
+            this.treeView = new ThePainterFormsTest.PainterTreeView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -59,15 +58,6 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "Ellipse";
             this.button2.UseVisualStyleBackColor = true;
-            // 
-            // listBox1
-            // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(1132, 560);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox1.Size = new System.Drawing.Size(260, 30);
-            this.listBox1.TabIndex = 3;
             // 
             // button3
             // 
@@ -128,7 +118,9 @@
             // 
             this.treeView.Location = new System.Drawing.Point(1132, 208);
             this.treeView.Name = "treeView";
-            this.treeView.Size = new System.Drawing.Size(260, 346);
+            this.treeView.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            this.treeView.SelectionForeColor = System.Drawing.Color.White;
+            this.treeView.Size = new System.Drawing.Size(260, 392);
             this.treeView.TabIndex = 10;
             // 
             // Form1
@@ -143,7 +135,6 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.listBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
@@ -156,7 +147,6 @@
         #endregion
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.PictureBox pictureBox1;
