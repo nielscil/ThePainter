@@ -76,14 +76,6 @@ namespace ThePainterFormsTest
             }
         }
 
-        public ListBox ListBox
-        {
-            get
-            {
-                return listBox1;
-            }
-        }
-
         public PainterTreeView TreeView
         {
             get
