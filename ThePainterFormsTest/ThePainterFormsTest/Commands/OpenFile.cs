@@ -23,14 +23,17 @@ namespace ThePainterFormsTest.Commands
 
         public void Execute(Canvas canvas)
         {
-            _tempdata = canvas.GetTempData(out _history, out _redoHistory, out _selected);
+            _tempdata = canvas.Items;
+            _selected = canvas.SelectedItem;
+            CommandExecuter.GetExecutionState(out _history, out _redoHistory);
 
             canvas.OpenFile(_filePath);
         }
 
         public void Undo(Canvas canvas)
         {
-            canvas.SetTempData(_tempdata, _history, _redoHistory, _selected);
+            CommandExecuter.SetExecutionState(_history, _redoHistory);
+            canvas.SetTempData(_tempdata, _selected);
         }
     }
 }

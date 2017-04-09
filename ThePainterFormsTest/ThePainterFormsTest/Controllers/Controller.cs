@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ThePainterFormsTest.Commands;
 using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Controllers
@@ -59,6 +60,8 @@ namespace ThePainterFormsTest.Controllers
             _form.Canvas.MouseDown += Canvas_MouseDown;
             _form.Canvas.MouseUp += Canvas_MouseUp;
             _form.Canvas.MouseMove += Canvas_MouseMove;
+
+            CommandExecuter.Init(_canvas);
         }
 
         private void SetButtonEventListeners()
@@ -76,43 +79,67 @@ namespace ThePainterFormsTest.Controllers
 
         private void RemoveGroupButton_Click(object sender, EventArgs e)
         {
-            _canvas.RemoveGroup();
+            if(_canvas.SelectedItem is Group)
+            {
+                CommandExecuter.Execute(new RemoveGroup(_canvas.SelectedItem as Group));
+            }
         }
 
         private void AddGroupButton_Click(object sender, EventArgs e)
         {
             List<DrawableItem> items = new List<DrawableItem>();
 
-            foreach(var item in _form.ListBox.SelectedItems)
+            foreach(var item in _form.TreeView.SelectedItems)
             {
-                items.Add((DrawableItem)item);
+                items.Add(item.Owner);
             }
 
-            _canvas.AddGroup(items);   
+            if (items.Count > 0)
+            {
+                int index = GetLowestIndex(items);
+
+                if (index != -1 && index != int.MaxValue)
+                {
+                    CommandExecuter.Execute(new AddGroup(items, index));
+                }
+            } 
+        }
+
+        private int GetLowestIndex(List<DrawableItem> items)
+        {
+            int low = int.MaxValue;
+
+            foreach(var item in items)
+            {
+                int newLow = _canvas.Items.IndexOf(item);
+                low = newLow < low ? newLow : low;
+            }
+
+            return low;
         }
 
         private bool _listBoxHasFocus = false;
         private void SetListBoxEventListeners()
         {
-            _form.ListBox.GotFocus += (s, e) => { _listBoxHasFocus = true; };
-            _form.ListBox.LostFocus += (s, e) => { _listBoxHasFocus = false; };
-            _form.ListBox.SelectedValueChanged += ListBox_SelectedValueChanged;
+            _form.TreeView.GotFocus += (s, e) => { _listBoxHasFocus = true; };
+            _form.TreeView.LostFocus += (s, e) => { _listBoxHasFocus = false; };
+            _form.TreeView.SelectionChanged += ListBox_SelectedValueChanged;
         }
 
         private void ListBox_SelectedValueChanged(object sender, EventArgs e)
         {   
             if(_listBoxHasFocus)
             {
-                ListBox lb = (ListBox)sender;
+                PainterTreeView treeView = (PainterTreeView)sender;
 
-                if (lb.SelectedItems.Count == 1)
+                if (treeView.SelectedItems.Count == 1)
                 {
-                    _canvas.SelectItemWithDeselect((DrawableItem)lb.SelectedItems[0]);
+                    CommandExecuter.Execute(new SelectItemWithDeselect(treeView.SelectedItems[0].Owner));
                 }
 
-                if (lb.SelectedItems.Count == 0 || lb.SelectedItems.Count > 1)
+                if (treeView.SelectedItems.Count == 0 || treeView.SelectedItems.Count > 1)
                 {
-                    _canvas.DeSelect();
+                    DeSelect();
                 }
             }
         }
@@ -121,7 +148,7 @@ namespace ThePainterFormsTest.Controllers
         {
             if(MessageBox.Show("Weet u zeker dat u het canvas wil legen?","The Painter",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                _canvas.Clear();
+                CommandExecuter.Execute(new ClearCanvas());
             }
         }
 
@@ -139,7 +166,7 @@ namespace ThePainterFormsTest.Controllers
 
             if(dialog.ShowDialog() == DialogResult.OK)
             {
-                _canvas.SaveCanvasToFile(dialog.FileName);
+                CommandExecuter.Execute(new SaveFile(dialog.FileName));
             }
 
         }
@@ -154,7 +181,7 @@ namespace ThePainterFormsTest.Controllers
 
             if(dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
             {
-                _canvas.OpenFileToCanvas(dialog.FileName);
+                CommandExecuter.Execute(new OpenFile(dialog.FileName));
             }
 
         }
@@ -163,25 +190,23 @@ namespace ThePainterFormsTest.Controllers
         {
             if(e.Control && e.KeyCode == Keys.Z)
             {
-                _canvas.Undo();
+                CommandExecuter.Undo();
             }
             else if(e.Control && e.KeyCode == Keys.Y)
             {
-                _canvas.Redo();
+                CommandExecuter.Redo();
             }
         }
 
         private void Ellipse_Click(object sender, EventArgs e)
         {
-            _canvas.SetDrawingMode(Canvas.Mode.Ellipse);
+            CommandExecuter.Execute(new ChangeDrawingMode(Canvas.Mode.Ellipse));
         }
 
         private void RectangleButton_Click(object sender, EventArgs e)
         {
-            _canvas.SetDrawingMode(Canvas.Mode.Rectange);
+            CommandExecuter.Execute(new ChangeDrawingMode(Canvas.Mode.Rectange));
         }
-
-
 
         public void SetButtonCLickedColors(Color rectangleColor, Color ellipseColor)
         {
@@ -194,110 +219,106 @@ namespace ThePainterFormsTest.Controllers
             _form.Canvas.Invalidate();
         }
 
-        public void AddToListBox(DrawableItem item)
+        #region TreeList functions
+
+        public void AddNode(DrawableItem drawableItem)
         {
-            ListBox listBox = _form.ListBox;
-            listBox.BeginUpdate();
-
-            listBox.Items.Add(item);
-
-            listBox.EndUpdate();
+            _form.TreeView.BeginUpdate();
+            _form.TreeView.Nodes.Add(drawableItem.Node);
+            _form.TreeView.EndUpdate();
         }
 
-        public void AddToListBox(DrawableItem item, int index)
+        public void AddNode(DrawableItem drawableItem, int index)
         {
-            ListBox listBox = _form.ListBox;
-            listBox.BeginUpdate();
-
-            listBox.Items.Insert(index, item);
-
-            listBox.EndUpdate();
+            _form.TreeView.BeginUpdate();
+            _form.TreeView.Nodes.Insert(index, drawableItem.Node);
+            _form.TreeView.EndUpdate();
         }
 
-        public void AddToListBox(List<DrawableItem> items)
+        public void AddNode(List<DrawableItem> items)
         {
-            ListBox listBox = _form.ListBox;
-            listBox.BeginUpdate();
-
-            foreach(var item in items)
-            {
-                listBox.Items.Add(item);
-            }
-
-            listBox.EndUpdate();
-        }
-
-        public void RemoveFromListBox(DrawableItem item)
-        {
-            ListBox listBox = _form.ListBox;
-            listBox.BeginUpdate();
-
-            listBox.Items.Remove(item);
-
-            listBox.EndUpdate();
-        }
-
-        public void RemoveFromListBox(List<DrawableItem> items)
-        {
-            ListBox listBox = _form.ListBox;
-            listBox.BeginUpdate();
+            _form.TreeView.BeginUpdate();
 
             foreach (var item in items)
             {
-                listBox.Items.Remove(item);
+                _form.TreeView.Nodes.Add(item.Node);
             }
 
-            listBox.EndUpdate();
+            _form.TreeView.EndUpdate();
         }
 
-        public void SelectInListBox(DrawableItem item, bool value)
+        public void RemoveNode(DrawableItem drawableItem)
         {
-            if (item == null)
-                return;
+            _form.TreeView.BeginUpdate();
 
-            bool oldValue = _listBoxHasFocus;
-            _listBoxHasFocus = false;
+            _form.TreeView.Nodes.Remove(drawableItem.Node);
 
+            _form.TreeView.EndUpdate();
+        }
 
-            int index = _form.ListBox.Items.IndexOf(item);
-            if(index >= 0)
+        public void RemoveNode(List<DrawableItem> drawableItems)
+        {
+            _form.TreeView.BeginUpdate();
+
+            foreach (var item in drawableItems)
             {
-                if(value)
-                {
-                    _form.ListBox.SelectedItems.Add(item);
-                }
-                else if(_form.ListBox.SelectedItems.Count == 1)
-                {
-                    _form.ListBox.SelectedItems.Remove(item);
-                }
+                _form.TreeView.Nodes.Remove(item.Node);
             }
 
-            _listBoxHasFocus = oldValue;
+            _form.TreeView.EndUpdate();
         }
 
-        public void ClearListBox()
+        //public void SelectInListBox(DrawableItem item, bool value)
+        //{
+        //    if (item == null)
+        //        return;
+
+        //    bool oldValue = _listBoxHasFocus;
+        //    _listBoxHasFocus = false;
+
+
+        //    int index = _form.TreeView.Nodes.IndexOf(item.Node);
+        //    if(index >= 0)
+        //    {
+        //        if(value)
+        //        {
+        //            _form.ListBox.SelectedItems.Add(item);
+        //        }
+        //        else if(_form.ListBox.SelectedItems.Count == 1)
+        //        {
+        //            _form.ListBox.SelectedItems.Remove(item);
+        //        }
+        //    }
+
+        //    _listBoxHasFocus = oldValue;
+        //}
+
+        public void ClearTree()
         {
-            _form.ListBox.Items.Clear();
+            _form.TreeView.Nodes.Clear();
         }
+
+        #endregion
 
         public void EnableRemoveGroupButton(bool enabled)
         {
             _form.RemoveGroupButton.Enabled = enabled;
         }
 
+        #region Mouse events
         private Point _begin = Point.Empty;
         private Point _deltaBegin = Point.Empty;
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && !_canvas.HasSelected)
             {
-                _canvas.CreateItem(_begin, e.Location);
+                CreateItem(_begin, e.Location);
                 _begin = Point.Empty;
             }
 
             if(e.Button == MouseButtons.Right && _canvas.HasSelected)
             {
-                _canvas.ResizeItem(_begin, e.Location);
+                ResizeItem(_begin, e.Location);
                 _begin = Point.Empty;
             }
             
@@ -305,11 +326,12 @@ namespace ThePainterFormsTest.Controllers
             {
                 if(e.Location == _begin)
                 {
-                    _canvas.SelectItemWithDeselect(e.Location);
+                    SelectItemWithDeselect(e.Location);
+                    
                 }
-                else
+                else if(_canvas.HasSelected)
                 {
-                    _canvas.MoveItem(_begin, e.Location);
+                    CommandExecuter.Execute(new MoveItem(_canvas.SelectedItem, _begin, e.Location));
                 }
                 
             }
@@ -354,6 +376,62 @@ namespace ThePainterFormsTest.Controllers
             }
 
 
+        }
+
+        public void CreateItem(Point begin, Point end)
+        {
+            _canvas.ClearTempItem();
+
+            if (end != begin)
+            {
+                if (!_canvas.HasSelected)
+                {
+                    if (_canvas.DrawingMode == Canvas.Mode.Rectange)
+                    {
+                        CommandExecuter.Execute(new AddRectangle(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y));
+                    }
+                    else
+                    {
+                        CommandExecuter.Execute(new AddEllipse(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y));
+                    }
+                }
+                else
+                {
+                    ResizeItem(begin, end);
+                }
+            }
+        }
+
+        public void ResizeItem(Point begin, Point end)
+        {
+            if (_canvas.HasSelected)
+            {
+                CommandExecuter.Execute(new ResizeItem(_canvas.SelectedItem, begin, end));
+            }
+        }
+
+        #endregion
+
+        public void SelectItemWithDeselect(Point location)
+        {
+            foreach (var item in _canvas.Items)
+            {
+                if (item.IsOnLocation(location))
+                {
+                    CommandExecuter.Execute(new SelectItemWithDeselect(item));
+                    return;
+                }
+            }
+
+            DeSelect();
+        }
+
+        public void DeSelect()
+        {
+            if (_canvas.HasSelected)
+            {
+                CommandExecuter.Execute(new DeselectItem(_canvas.SelectedItem));
+            }
         }
     }
 }

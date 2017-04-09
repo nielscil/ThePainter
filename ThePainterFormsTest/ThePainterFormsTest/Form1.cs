@@ -84,6 +84,14 @@ namespace ThePainterFormsTest
             }
         }
 
+        public PainterTreeView TreeView
+        {
+            get
+            {
+                return treeView;
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();

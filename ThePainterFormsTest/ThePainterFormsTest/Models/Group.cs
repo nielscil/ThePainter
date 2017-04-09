@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using ThePainterFormsTest.Controllers;
 
 namespace ThePainterFormsTest.Models
 {
@@ -24,6 +26,29 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+
+        protected PainterTreeNode _node;
+        public override PainterTreeNode Node
+        {
+            get
+            {
+                if(_node == null)
+                {
+                    _node = new PainterTreeNode(this);
+
+                    foreach (var item in _subItems)
+                    {
+                        _node.Nodes.Add(item.Node);
+                    }
+                }
+                return _node;
+            }
+            protected set
+            {
+                _node = value;
+            }
+        }
+
         private List<DrawableItem> _subItems = new List<DrawableItem>();
 
         public Group()
@@ -34,13 +59,15 @@ namespace ThePainterFormsTest.Models
         public Group(List<DrawableItem> items)
         {
             _subItems = new List<DrawableItem>(items);
-      
+
             CalculatePositions();
         }
 
-        public void AddItem(DrawableItem item)
+        public void AddItem(DrawableItem item, int index)
         {
             _subItems.Add(item);
+
+            Node.Nodes.Insert(index, item.Node);
 
             CalculatePositions();
         }
@@ -48,6 +75,8 @@ namespace ThePainterFormsTest.Models
         public void RemoveItem(DrawableItem item)
         {
             _subItems.Remove(item);
+
+            Node.Nodes.Remove(item.Node);
 
             CalculatePositions();
         }

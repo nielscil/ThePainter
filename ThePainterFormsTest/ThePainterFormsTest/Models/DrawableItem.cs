@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThePainterFormsTest.Models;
+﻿using System.Drawing;
 
 namespace ThePainterFormsTest.Models
 {
     public abstract class DrawableItem
     {
+
+        public virtual PainterTreeNode Node { get; protected set; }
+
         protected int _x;
         public virtual int X
         {
@@ -54,9 +51,11 @@ namespace ThePainterFormsTest.Models
             _y = y;
             _width = width;
             _height = height;
+            Node = new PainterTreeNode(this);
         }
 
-        public DrawableItem() { }
+        public DrawableItem()
+        {}
 
         public virtual void Resize(Point begin, Point end)
         {

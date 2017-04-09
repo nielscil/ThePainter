@@ -37,6 +37,7 @@
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
+            this.treeView = new PainterTreeView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,10 +63,10 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(1132, 378);
+            this.listBox1.Location = new System.Drawing.Point(1132, 560);
             this.listBox1.Name = "listBox1";
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox1.Size = new System.Drawing.Size(260, 212);
+            this.listBox1.Size = new System.Drawing.Size(260, 30);
             this.listBox1.TabIndex = 3;
             // 
             // button3
@@ -123,11 +124,19 @@
             this.button7.Text = "Clear Canvas";
             this.button7.UseVisualStyleBackColor = true;
             // 
+            // treeView
+            // 
+            this.treeView.Location = new System.Drawing.Point(1132, 208);
+            this.treeView.Name = "treeView";
+            this.treeView.Size = new System.Drawing.Size(260, 346);
+            this.treeView.TabIndex = 10;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1404, 612);
+            this.Controls.Add(this.treeView);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
@@ -154,6 +163,7 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
+        private PainterTreeView treeView;
     }
 }
 

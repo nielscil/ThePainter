@@ -24,13 +24,15 @@ namespace ThePainterFormsTest.Commands
 
         public void Execute(Canvas canvas)
         {
-            canvas.AddItem(_ellipse);  
+            canvas.AddItem(_ellipse);
+
             Controller.Instance.InvalidateCanvas();
         }
 
         public void Undo(Canvas canvas)
         {
             canvas.RemoveItem(_ellipse);
+
             Controller.Instance.InvalidateCanvas();
         }
     }

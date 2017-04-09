@@ -22,7 +22,7 @@ namespace ThePainterFormsTest.Models
 
         public enum Mode { Rectange, Ellipse };
 
-        private List<DrawableItem> _items = new List<DrawableItem>();
+        public List<DrawableItem> Items { get; private set; } = new List<DrawableItem>();
 
         private DrawableItem _selectedItem = null;
         public DrawableItem SelectedItem
@@ -41,11 +41,11 @@ namespace ThePainterFormsTest.Models
                     _tempItem = null;
                 }
 
-                Controller.SelectInListBox(_selectedItem, false);
+                //Controller.SelectInListBox(_selectedItem, false);
 
                 _selectedItem = value;
 
-                Controller.SelectInListBox(_selectedItem, true);
+                //Controller.SelectInListBox(_selectedItem, true);
 
                 if (_selectedItem != null)
                 {
@@ -87,106 +87,59 @@ namespace ThePainterFormsTest.Models
             DrawingMode = Mode.Rectange;
         }
 
-        public void AddGroup(IList<DrawableItem> selectedItems)
+        public void AddItem(DrawableItem item)
         {
-            if(selectedItems.Count > 0)
-            {
-                int index = _items.IndexOf(selectedItems[0]);
-
-                if (index != -1)
-                {
-                    PushHistory(new AddGroup(selectedItems, index));
-                }
-            }
+            Items.Add(item);
+            Controller.AddNode(item);
         }
 
         public void AddGroup(Group group, int index)
         {
-            _items.Insert(index, group);
-            
-            foreach(var item in group.Items)
+            foreach (var item in group.Items)
             {
-                _items.Remove(item);
+                RemoveItem(item);
             }
 
-            Controller.Instance.AddToListBox(group, index);
+            AddItem(group, index);
         }
 
-        public void RemoveGroup()
+        public void AddItem(DrawableItem item, int index)
         {
-            if(SelectedItem is Group)
-            {
-                PushHistory(new RemoveGroup(SelectedItem as Group));
-            }
+            Items.Insert(index, item);
+            Controller.AddNode(item, index);
         }
 
-        public int RemoveGroup(Group group)
+        public void AddRange(List<DrawableItem> items)
         {
-            int index = _items.IndexOf(group);
-            _items.Remove(group);
-
-            List<DrawableItem> items = group.Items;
-            items.Reverse();
-
-            foreach(var item in items)
-            {
-                _items.Insert(index, item);
-            }
-
-            Controller.Instance.RemoveFromListBox(group);
-            return index;
-        }
-
-        public void SetDrawingMode(Mode mode)
-        {
-            PushHistory(new ChangeDrawingMode(mode));
-        }
-
-        public void AddItem(DrawableItem item)
-        {
-            _items.Add(item);
-            Controller.AddToListBox(item);
+            Items.AddRange(items);
+            Controller.AddNode(items);
         }
 
         public void RemoveItem(DrawableItem item)
         {
-            _items.Remove(item);
-            Controller.RemoveFromListBox(item);
+            Items.Remove(item);
+            Controller.RemoveNode(item);
         }
 
-        public void SelectItemWithDeselect(Point location)
+        public int RemoveGroup(Group group)
         {
-            foreach (var item in _items)
+            int index = Items.IndexOf(group);
+            RemoveItem(group as DrawableItem);
+
+            List<DrawableItem> items = group.Items;
+            items.Reverse();
+
+            foreach (var item in items)
             {
-                if (item.IsOnLocation(location))
-                {
-                    PushHistory(new SelectItemWithDeselect(item));
-                    return;
-                }
+                AddItem(item, index);
             }
 
-            if (SelectedItem != null)
-            {
-                PushHistory(new DeselectItem(SelectedItem));
-            }
-        }
-
-        public void SelectItemWithDeselect(DrawableItem item)
-        {
-            PushHistory(new SelectItemWithDeselect(item));
-        }
-
-        public void DeSelect()
-        {
-            if(_selectedItem != null)
-            {
-                PushHistory(new DeselectItem(_selectedItem));
-            }
+            return index;
         }
 
         public void Draw(Graphics graphics)
         {
-            foreach(var item in _items)
+            foreach(var item in Items)
             {
                 item.Draw(graphics);
             }
@@ -238,52 +191,12 @@ namespace ThePainterFormsTest.Models
             }            
         }
 
-        #endregion
-
-        public void CreateItem(Point begin, Point end)
+        public void ClearTempItem()
         {
             _tempItem = null;
-
-            if (end != begin)
-            {
-                if(!HasSelected)
-                {
-                    if (DrawingMode == Mode.Rectange)
-                    {
-                        PushHistory(new AddRectangle(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y));
-                    }
-                    else
-                    {
-                        PushHistory(new AddEllipse(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y));
-                    }
-                }
-                else
-                {
-                    ResizeItem(begin, end);
-                }            
-            }
         }
 
-        public void ResizeItem(Point begin, Point end)
-        {
-            if(HasSelected)
-            {
-                PushHistory(new ResizeItem(SelectedItem, begin, end));
-            }
-        }
-
-        public void MoveItem(Point begin, Point end)
-        {
-            if (HasSelected)
-            {
-                PushHistory(new MoveItem(SelectedItem, begin, end));
-            }
-        }
-
-        public void OpenFileToCanvas(string path)
-        {
-            PushHistory(new OpenFile(path));
-        }
+        #endregion
 
         public void OpenFile(string path)
         {
@@ -291,69 +204,46 @@ namespace ThePainterFormsTest.Models
 
             if(readedItems != null)
             {
-                _items.Clear();
-                Controller.ClearListBox();
+                Items.Clear();
+                Controller.ClearTree();
 
-                _items.AddRange(readedItems);
-
-                Controller.AddToListBox(_items);
+                AddRange(readedItems);
+                
                 Controller.InvalidateCanvas();
             }
         }
 
-        public void SaveCanvasToFile(string path)
-        {
-            PushHistory(new SaveFile(path));
-        }
-
         public void SaveFile(string path)
         {
-            if(FileParser.Instance.WriteFile(path, _items))
+            if(FileParser.Instance.WriteFile(path, Items))
             {
                 if(MessageBox.Show("Bestand succesvol opgeslagen\n Wilt u het canvas legen?", "The Painter", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    Clear();
+                    CommandExecuter.Execute(new ClearCanvas());
                 }
             }
         }
 
-        public List<DrawableItem> GetTempData(out Stack<ICommand> history, out Stack<ICommand> redoHistory, out DrawableItem selectedItem)
+        public void SetTempData(List<DrawableItem> items, DrawableItem selectedItem)
         {
-            history = new Stack<ICommand>(_history);
-            redoHistory = new Stack<ICommand>(_redoHistory);
-            selectedItem = SelectedItem;
-
-            return new List<DrawableItem>(_items);
-        }
-
-        public void SetTempData(List<DrawableItem> items, Stack<ICommand> history, Stack<ICommand> redoHistory, DrawableItem selectedItem)
-        {
-            _history = history;
-            _redoHistory = redoHistory;
-
-            _items = items;
+            Items = items;
             _selectedItem = selectedItem;
 
-            Controller.ClearListBox();
-            Controller.AddToListBox(_items);
+            Controller.ClearTree();
+            Controller.AddNode(Items);
 
             Controller.InvalidateCanvas();
         }
 
-        public void Clear()
-        {
-            PushHistory(new ClearCanvas());
-        }
-
         public void ClearCanvas()
         {
-            _items.Clear();
+            Items.Clear();
             _selectedItem = null;
             _tempItem = null;
-            _history.Clear();
-            _redoHistory.Clear();
 
-            Controller.ClearListBox();
+            CommandExecuter.Clear();
+
+            Controller.ClearTree();
             Controller.InvalidateCanvas();
         }
 
@@ -364,58 +254,6 @@ namespace ThePainterFormsTest.Models
 
             Controller.SetButtonCLickedColors(rectangleColor, ellipseColor);
         }
-
-        #region History
-
-        private Stack<ICommand> _history = new Stack<ICommand>();
-
-        private Stack<ICommand> _redoHistory = new Stack<ICommand>();
-
-        private void PushHistory(ICommand command)
-        {
-            if(command != null)
-            {
-                command.Execute(this);
-                _history.Push(command);
-            }
-            _redoHistory.Clear();
-        }
-
-        private ICommand PopHistory()
-        {
-            if (_history.Count == 0)
-            {
-                return null;
-            }
-                
-            ICommand command = _history.Pop();
-            command.Undo(this);
-
-            return command;
-        }
-
-        public void Redo()
-        {
-            if(_redoHistory.Count > 0)
-            {
-                ICommand command = _redoHistory.Pop();
-                command.Execute(this);
-                _history.Push(command);
-            }
-        }
-
-        public void Undo()
-        {
-            ICommand command = PopHistory();
-
-            if(command != null)
-            {
-                _redoHistory.Push(command);
-            }
-        }
-
-
-        #endregion
 
     }
 }

@@ -24,7 +24,7 @@ namespace ThePainterFormsTest.Commands
 
         public void Undo(Canvas canvas)
         {
-            canvas.AddGroup(_group, _index);
+            canvas.AddItem(_group, _index);
         }
     }
 }
