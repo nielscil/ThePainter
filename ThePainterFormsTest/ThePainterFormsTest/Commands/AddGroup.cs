@@ -13,9 +13,10 @@ namespace ThePainterFormsTest.Commands
         private Group _group;
         private int _index;
 
-        public AddGroup(IList<DrawableItem> items, int index)
+        public AddGroup(IList<DrawableItem> items, int index, DrawableItem parent)
         {
             _group = new Group(items.ToList());
+            _group.Parent = parent;
             _index = index;
         }
 

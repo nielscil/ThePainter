@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThePainterFormsTest.Controllers;
+using ThePainterFormsTest.Controls;
 
 namespace ThePainterFormsTest.Models
 {
@@ -49,7 +50,7 @@ namespace ThePainterFormsTest.Models
             }
         }
 
-        private List<DrawableItem> _subItems = new List<DrawableItem>();
+        private List<DrawableItem> _subItems = new List<DrawableItem>();        
 
         public Group()
         {
@@ -60,6 +61,11 @@ namespace ThePainterFormsTest.Models
         {
             _subItems = new List<DrawableItem>(items);
 
+            foreach(var item in items)
+            {
+                item.Parent = this;
+            }
+
             CalculatePositions();
         }
 
@@ -68,6 +74,8 @@ namespace ThePainterFormsTest.Models
             _subItems.Add(item);
 
             Node.Nodes.Insert(index, item.Node);
+
+            item.Parent = this;
 
             CalculatePositions();
         }

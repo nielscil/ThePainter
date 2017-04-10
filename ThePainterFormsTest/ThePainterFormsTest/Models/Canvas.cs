@@ -41,11 +41,11 @@ namespace ThePainterFormsTest.Models
                     _tempItem = null;
                 }
 
-                //Controller.SelectInListBox(_selectedItem, false);
+                Controller.SelectNode(_selectedItem, false);
 
                 _selectedItem = value;
 
-                //Controller.SelectInListBox(_selectedItem, true);
+                Controller.SelectNode(_selectedItem, true);
 
                 if (_selectedItem != null)
                 {
@@ -91,6 +91,7 @@ namespace ThePainterFormsTest.Models
         {
             Items.Add(item);
             Controller.AddNode(item);
+            item.Parent = null;
         }
 
         public void AddGroup(Group group, int index)
@@ -107,6 +108,7 @@ namespace ThePainterFormsTest.Models
         {
             Items.Insert(index, item);
             Controller.AddNode(item, index);
+            item.Parent = null;
         }
 
         public void AddRange(List<DrawableItem> items)
@@ -123,15 +125,33 @@ namespace ThePainterFormsTest.Models
 
         public int RemoveGroup(Group group)
         {
-            int index = Items.IndexOf(group);
-            RemoveItem(group as DrawableItem);
-
-            List<DrawableItem> items = group.Items;
-            items.Reverse();
-
-            foreach (var item in items)
+            int index;
+            if (group.Parent == null)
             {
-                AddItem(item, index);
+                index = Items.IndexOf(group);
+                RemoveItem(group as DrawableItem);
+
+                List<DrawableItem> items = group.Items;
+                items.Reverse();
+
+                foreach (var item in items)
+                {
+                    AddItem(item, index);
+                }
+            }
+            else
+            {
+                Group parent = group.Parent as Group;
+                index = parent.Items.IndexOf(group);
+                parent.RemoveItem(group);
+
+                List<DrawableItem> items = group.Items;
+                items.Reverse();
+
+                foreach (var item in items)
+                {
+                    parent.AddItem(item, index);
+                }
             }
 
             return index;

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThePainterFormsTest.Commands;
+using ThePainterFormsTest.Controls;
 using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Controllers
@@ -96,23 +97,30 @@ namespace ThePainterFormsTest.Controllers
 
             if (items.Count > 0)
             {
-                int index = GetLowestIndex(items);
+                DrawableItem item;
+                int index = GetLowestIndex(items, out item);
 
                 if (index != -1 && index != int.MaxValue)
                 {
-                    CommandExecuter.Execute(new AddGroup(items, index));
+                    CommandExecuter.Execute(new AddGroup(items, index, item.Parent));
                 }
             } 
         }
 
-        private int GetLowestIndex(List<DrawableItem> items)
+        private int GetLowestIndex(List<DrawableItem> items, out DrawableItem parent)
         {
             int low = int.MaxValue;
+            parent = items[0];
 
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 int newLow = _canvas.Items.IndexOf(item);
-                low = newLow < low ? newLow : low;
+
+                if(newLow < low)
+                {
+                    low = newLow;
+                    parent = item;
+                }
             }
 
             return low;
@@ -226,6 +234,7 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.BeginUpdate();
             _form.TreeView.Nodes.Add(drawableItem.Node);
             _form.TreeView.EndUpdate();
+            _form.TreeView.ExpandAll();
         }
 
         public void AddNode(DrawableItem drawableItem, int index)
@@ -233,6 +242,7 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.BeginUpdate();
             _form.TreeView.Nodes.Insert(index, drawableItem.Node);
             _form.TreeView.EndUpdate();
+            _form.TreeView.ExpandAll();
         }
 
         public void AddNode(List<DrawableItem> items)
@@ -245,6 +255,7 @@ namespace ThePainterFormsTest.Controllers
             }
 
             _form.TreeView.EndUpdate();
+            _form.TreeView.ExpandAll();
         }
 
         public void RemoveNode(DrawableItem drawableItem)
@@ -254,6 +265,7 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.Nodes.Remove(drawableItem.Node);
 
             _form.TreeView.EndUpdate();
+            _form.TreeView.ExpandAll();
         }
 
         public void RemoveNode(List<DrawableItem> drawableItems)
@@ -266,32 +278,33 @@ namespace ThePainterFormsTest.Controllers
             }
 
             _form.TreeView.EndUpdate();
+            _form.TreeView.ExpandAll();
         }
 
-        //public void SelectInListBox(DrawableItem item, bool value)
-        //{
-        //    if (item == null)
-        //        return;
+        public void SelectNode(DrawableItem item, bool value)
+        {
+            if (item == null)
+                return;
 
-        //    bool oldValue = _listBoxHasFocus;
-        //    _listBoxHasFocus = false;
+            bool oldValue = _listBoxHasFocus;
+            _listBoxHasFocus = false;
 
 
-        //    int index = _form.TreeView.Nodes.IndexOf(item.Node);
-        //    if(index >= 0)
-        //    {
-        //        if(value)
-        //        {
-        //            _form.ListBox.SelectedItems.Add(item);
-        //        }
-        //        else if(_form.ListBox.SelectedItems.Count == 1)
-        //        {
-        //            _form.ListBox.SelectedItems.Remove(item);
-        //        }
-        //    }
+            int index = _form.TreeView.Nodes.IndexOf(item.Node);
+            if (index >= 0)
+            {
+                if (value)
+                {
+                    _form.TreeView.SelectedItems.Add(item.Node);
+                }
+                else if (_form.TreeView.SelectedItems.Count == 1)
+                {
+                    _form.TreeView.SelectedItems.Remove(item.Node);
+                }
+            }
 
-        //    _listBoxHasFocus = oldValue;
-        //}
+            _listBoxHasFocus = oldValue;
+        }
 
         public void ClearTree()
         {

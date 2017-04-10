@@ -1,4 +1,6 @@
-﻿namespace ThePainterFormsTest
+﻿using ThePainterFormsTest.Controls;
+
+namespace ThePainterFormsTest
 {
     partial class Form1
     {
@@ -36,7 +38,7 @@
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
-            this.treeView = new ThePainterFormsTest.PainterTreeView();
+            this.treeView = new PainterTreeView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 

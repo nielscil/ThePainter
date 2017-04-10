@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThePainterFormsTest.Models;
 
-namespace ThePainterFormsTest
+namespace ThePainterFormsTest.Controls
 {
     public class PainterTreeNode : TreeNode
     {

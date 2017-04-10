@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ThePainterFormsTest
+namespace ThePainterFormsTest.Controls
 {
     public class PainterTreeView : TreeView
     {
@@ -34,7 +36,7 @@ namespace ThePainterFormsTest
             }
         }
 
-        public List<PainterTreeNode> SelectedItems { get; private set; } = new List<PainterTreeNode>();
+        public ObservableCollection<PainterTreeNode> SelectedItems { get; private set; } = new ObservableCollection<PainterTreeNode>();
         public List<PainterTreeNode> Items
         {
             get
@@ -65,6 +67,7 @@ namespace ThePainterFormsTest
         {
             BeforeSelect += PainterTreeView_BeforeSelect;
             AfterSelect += PainterTreeView_AfterSelect;
+            SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
         }
 
         protected override void Dispose(bool disposing)
@@ -86,11 +89,12 @@ namespace ThePainterFormsTest
         {
             BeforeSelect -= PainterTreeView_BeforeSelect;
             AfterSelect -= PainterTreeView_AfterSelect;
+            SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
         }
-
+        private bool _usingSelect = false;
         private void PainterTreeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
-
+            _usingSelect = true;
             if(e.Action == TreeViewAction.ByMouse || e.Action == TreeViewAction.ByKeyboard)
             {
                 if(!IsCtrlShift)
@@ -109,11 +113,33 @@ namespace ThePainterFormsTest
                 
                 OnSelectionChanged();
             }
+            _usingSelect = false;
         }
 
         private void PainterTreeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
             SelectedNode = null;
+        }
+
+        private void SelectedItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if(!_usingSelect)
+            {
+                if (e.Action == NotifyCollectionChangedAction.Add)
+                {
+                    foreach (var item in e.NewItems)
+                    {
+                        SetSelectedColor(item as TreeNode);
+                    }
+                }
+                else if (e.Action == NotifyCollectionChangedAction.Remove)
+                {
+                    foreach (var item in e.OldItems)
+                    {
+                        SetNormalColor(item as TreeNode);
+                    }
+                }
+            }
         }
 
         private void RemoveSelection()
@@ -136,19 +162,30 @@ namespace ThePainterFormsTest
             if (node is PainterTreeNode)
             {
                 SelectedItems.Add(node as PainterTreeNode);
-                node.BackColor = SelectionColor;
-                node.ForeColor = SelectionForeColor;
+                SetSelectedColor(node);
             }
+        }
+
+        private void SetSelectedColor(TreeNode node)
+        {
+            node.BackColor = SelectionColor;
+            node.ForeColor = SelectionForeColor;
         }
 
         private void RemoveFromSelection(TreeNode node)
         {
             if(node is PainterTreeNode)
             {
-                node.BackColor = DefaultBackColor;
-                node.ForeColor = DefaultForeColor;
                 SelectedItems.Remove(node as PainterTreeNode);
+                SetNormalColor(node);
             }
         }
+
+        private void SetNormalColor(TreeNode node)
+        {
+            node.BackColor = DefaultBackColor;
+            node.ForeColor = DefaultForeColor;
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using ThePainterFormsTest.Controls;
 
 namespace ThePainterFormsTest.Models
 {
@@ -42,6 +43,8 @@ namespace ThePainterFormsTest.Models
         }
 
         public Color Color { get; set; } = Color.Black;
+
+        public DrawableItem Parent { get; set; }
 
         public abstract string Name { get; }
 
