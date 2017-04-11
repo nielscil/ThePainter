@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThePainterFormsTest.Controllers;
 using ThePainterFormsTest.Controls;
+using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Models
 {
@@ -119,18 +120,6 @@ namespace ThePainterFormsTest.Models
             }
         }
 
-        public override void Move(int x, int y)
-        {
-            int xDiff = x - X;
-            int yDiff = y - Y;
-            foreach (var item in _subItems)
-            {
-                item.Move(item.X + xDiff, item.Y + yDiff);
-            }
-
-            CalculatePositions();
-        }
-
         public override void Move(Point begin, Point end)
         {
             foreach(var item in _subItems)
@@ -191,7 +180,7 @@ namespace ThePainterFormsTest.Models
             return group;
         }
 
-        private void CalculatePositions()
+        public void CalculatePositions()
         {
             int x = int.MaxValue;
             int y = int.MaxValue;
@@ -207,10 +196,22 @@ namespace ThePainterFormsTest.Models
                 heigth = (item.Y + item.Height) > heigth ? item.Y + item.Height : heigth;
             }
 
-            _x = x;
-            _y = y;
-            _width = width;
-            _height = heigth;
+            X = x;
+            Y = y;
+            Width = width;
+            Height = heigth;
+        }
+
+        public override void Accept(IVisitor visitor)
+        {
+            visitor.Visit(this);
+
+            foreach (var item in Items)
+            {
+                item.Accept(visitor);
+            }
+
+            CalculatePositions(); //TODO: find other way for this, maybe lazy while getting ??
         }
     }
 }

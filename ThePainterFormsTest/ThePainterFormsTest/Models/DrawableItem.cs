@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using ThePainterFormsTest.Controls;
+using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Models
 {
@@ -8,39 +9,13 @@ namespace ThePainterFormsTest.Models
 
         public virtual PainterTreeNode Node { get; protected set; }
 
-        protected int _x;
-        public virtual int X
-        {
-            get
-            {
-                return _x;
-            }
-        }
+        public int X { get; set; }
 
-        protected int _y;
-        public virtual int Y
-        {
-            get
-            {
-                return _y;
-            }
-        }
-        protected int _height;
-        public virtual int Height
-        {
-            get
-            {
-                return _height;
-            }
-        }
-        protected int _width;
-        public virtual int Width
-        {
-            get
-            {
-                return _width;
-            }
-        }
+        public virtual int Y { get; set; }
+
+        public virtual int Height { get; set; }
+
+        public virtual int Width { get; set; }
 
         public Color Color { get; set; } = Color.Black;
 
@@ -50,10 +25,10 @@ namespace ThePainterFormsTest.Models
 
         public DrawableItem(int x, int y, int width, int height)
         {
-            _x = x;
-            _y = y;
-            _width = width;
-            _height = height;
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
             Node = new PainterTreeNode(this);
         }
 
@@ -62,34 +37,34 @@ namespace ThePainterFormsTest.Models
 
         public virtual void Resize(Point begin, Point end)
         {
-            _height += end.Y - begin.Y;
-            _width += end.X - begin.X;
+            Height += end.Y - begin.Y;
+            Width += end.X - begin.X;
         }
 
         public virtual void Resize(int width, int height)
         {
-            _width = width;
-            _height = height;
+            Width = width;
+            Height = height;
         }
 
         public virtual void Move(Point begin, Point end)
         {
-            _x += end.X - begin.X;
-            _y += end.Y - begin.Y;
+            X += end.X - begin.X;
+            Y += end.Y - begin.Y;
         }
 
         public virtual void Move(int x, int y)
         {
-            _x = x;
-            _y = y;
+            X = x;
+            Y = y;
         }
 
         public abstract void Draw(Graphics graphics);
 
         public virtual bool IsOnLocation(Point point)
         {
-            bool isXInItem = (point.X >= _x && point.X <= _x + _width) || (point.X >= _x + _width && point.X <= _x);
-            bool isYInItem = (point.Y >= _y && point.Y <= _y + _height) || (point.Y >= _y + _height && point.Y <= _y);
+            bool isXInItem = (point.X >= X && point.X <= X + Width) || (point.X >= X + Width && point.X <= X);
+            bool isYInItem = (point.Y >= Y && point.Y <= Y + Height) || (point.Y >= Y + Height && point.Y <= Y);
             return isXInItem && isYInItem;
         }
 
@@ -105,8 +80,10 @@ namespace ThePainterFormsTest.Models
 
         public virtual string Serialize(string prefix)
         {
-            return $"{prefix}{Name} {_x} {_y} {_width} {_height}";
+            return $"{prefix}{Name} {X} {Y} {Width} {Height}";
         }
+
+        public abstract void Accept(IVisitor visitor);
 
         public abstract DrawableItem Clone();
 

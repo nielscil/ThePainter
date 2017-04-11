@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Models
 {
@@ -23,10 +24,10 @@ namespace ThePainterFormsTest.Models
         {
             using (Pen p = new Pen(Color))
             {
-                graphics.DrawLine(p, _x, _y, _x + _width, _y);
-                graphics.DrawLine(p, _x, _y, _x, _y + _height);
-                graphics.DrawLine(p, _x + _width, _y, _x + _width, _y + _height);
-                graphics.DrawLine(p, _x, _y + _height, _x + _width, _y + _height);
+                graphics.DrawLine(p, X, Y, X + Width, Y);
+                graphics.DrawLine(p, X, Y, X, Y + Height);
+                graphics.DrawLine(p, X + Width, Y, X + Width, Y + Height);
+                graphics.DrawLine(p, X, Y + Height, X + Width, Y + Height);
             }
                 
         }
@@ -36,6 +37,11 @@ namespace ThePainterFormsTest.Models
             Rectangle rect = new Rectangle(X, Y, Width, Height);
             rect.Color = Color;
             return rect;
+        }
+
+        public override void Accept(IVisitor visitor)
+        {
+            visitor.Visit(this);
         }
     }
 }
