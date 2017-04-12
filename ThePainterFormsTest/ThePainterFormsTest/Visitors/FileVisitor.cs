@@ -7,16 +7,10 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
-    public class ResizeVisitor : IVisitor
+    public class FileVisitor : IVisitor
     {
-        private int _width;
-        private int _height;
-
-        public ResizeVisitor(int width, int heigth)
-        {
-            _width = width;
-            _height = heigth;
-        }
+        public StringBuilder StringBuilder { get; } = new StringBuilder();
+        private string _prefix = string.Empty;
 
         public void Visit(Rectangle rectangle)
         {
@@ -30,20 +24,18 @@ namespace ThePainterFormsTest.Visitors
 
         private void DoVisit(DrawableItem item)
         {
-            item.Width += _width;
-            item.Height += _height;
-
-            item.NotifyPositionChangeToParent();
+            StringBuilder.AppendLine($"{_prefix}{item.ToString()} {item.X} {item.Y} {item.Width} {item.Height}");
         }
 
         public void BeforeGroup(Group group)
         {
-            //Do nothing here ??
+            StringBuilder.AppendLine($"{_prefix}group {group.Items.Count}");
+            _prefix += "\t";
         }
 
         public void AfterGroup(Group group)
         {
-            //Do nothing here ??
+            _prefix = _prefix.Remove(_prefix.Length - 1);
         }
     }
 }

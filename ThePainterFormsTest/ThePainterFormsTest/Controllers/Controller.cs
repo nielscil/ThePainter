@@ -112,17 +112,33 @@ namespace ThePainterFormsTest.Controllers
             int low = int.MaxValue;
             parent = items[0];
 
-            foreach (var item in items)
+            if(parent.Parent == null)
             {
-                int newLow = _canvas.Items.IndexOf(item);
-
-                if(newLow < low)
+                foreach (var item in items)
                 {
-                    low = newLow;
-                    parent = item;
+                    int newLow = _canvas.Items.IndexOf(item);
+
+                    if (newLow < low)
+                    {
+                        low = newLow;
+                        parent = item;
+                    }
                 }
             }
+            else if(parent.Parent is Group)
+            {
+                Group temp = parent.Parent as Group;
+                foreach (var item in items)
+                {
+                    int newLow = temp.Items.IndexOf(item);
 
+                    if (newLow < low)
+                    {
+                        low = newLow;
+                        parent = item;
+                    }
+                }
+            }
             return low;
         }
 
@@ -142,12 +158,12 @@ namespace ThePainterFormsTest.Controllers
 
                 if (treeView.SelectedItems.Count == 1)
                 {
-                    CommandExecuter.Execute(new SelectItemWithDeselect(treeView.SelectedItems[0].Owner));
+                    CommandExecuter.Execute(new SelectItemWithDeselectFromTree(treeView.SelectedItems[0].Owner));
                 }
 
                 if (treeView.SelectedItems.Count == 0 || treeView.SelectedItems.Count > 1)
                 {
-                    DeSelect();
+                    CommandExecuter.Execute(new DeselectItemFromTree(_canvas.SelectedItem));
                 }
             }
         }
@@ -289,9 +305,8 @@ namespace ThePainterFormsTest.Controllers
             bool oldValue = _listBoxHasFocus;
             _listBoxHasFocus = false;
 
-
-            int index = _form.TreeView.Nodes.IndexOf(item.Node);
-            if (index >= 0)
+            bool isInCollection = _form.TreeView.Nodes.IsInCollection(item.Node);//Nodes.IndexOf(item.Node);
+            if (isInCollection)
             {
                 if (value)
                 {

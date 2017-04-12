@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThePainterFormsTest.Controllers;
 using ThePainterFormsTest.Models;
+using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Commands
 {
@@ -16,8 +17,8 @@ namespace ThePainterFormsTest.Commands
 
         public ResizeItem(DrawableItem item, Point begin, Point end)
         {
-            _width += end.X - begin.X + item.Width;
-            _height += end.Y - begin.Y + item.Height;
+            _width = end.X - begin.X;
+            _height = end.Y - begin.Y;
             _oldWith = item.Width;
             _oldHeight = item.Height;
             _item = item;
@@ -26,7 +27,9 @@ namespace ThePainterFormsTest.Commands
         public void Execute(Canvas canvas)
         {
             canvas.SelectedItem = null;
-            _item.Resize(_width, _height);
+
+            _item.Accept(new ResizeVisitor(_width, _height));
+
             canvas.SelectedItem = _item;
 
             Controller.Instance.InvalidateCanvas();
@@ -35,7 +38,9 @@ namespace ThePainterFormsTest.Commands
         public void Undo(Canvas canvas)
         {
             canvas.SelectedItem = null;
-            _item.Resize(_oldWith, _oldHeight);
+
+            _item.Accept(new ResizeVisitor(_oldWith, _oldHeight));
+
             canvas.SelectedItem = _item;
 
             Controller.Instance.InvalidateCanvas();

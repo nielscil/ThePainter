@@ -90,81 +90,10 @@ namespace ThePainterFormsTest.Models
             CalculatePositions();
         }
 
-        public override void Deselect()
+        public override void NotifyPositionChangeToParent()
         {
-            base.Deselect();
-            
-            foreach(var item in _subItems)
-            {
-                item.Deselect();
-            }
-        }
-
-        public override void Select()
-        {
-            base.Select();
-
-            foreach(var item in _subItems)
-            {
-                item.Select();
-            }
-
             CalculatePositions();
-        }
-
-        public override void Draw(Graphics graphics)
-        {
-            foreach(var item in _subItems)
-            {
-                item.Draw(graphics);
-            }
-        }
-
-        public override void Move(Point begin, Point end)
-        {
-            foreach(var item in _subItems)
-            {
-                item.Move(begin, end);
-            }
-
-            CalculatePositions();
-        }
-
-        public override void Resize(int width, int height)
-        {
-            int widthDiff = width - Width;
-            int heightDiff = height - Height;
-            foreach (var item in _subItems)
-            {
-                item.Resize(item.Width + widthDiff, item.Height + heightDiff);
-            }
-
-            CalculatePositions();
-        }
-
-        public override void Resize(Point begin, Point end)
-        {
-            foreach (var item in _subItems)
-            {
-                item.Resize(begin, end);
-            }
-
-            CalculatePositions();
-        }
-
-        public override string Serialize(string prefix)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{prefix}group {_subItems.Count}");
-
-            prefix += "\t";
-
-            foreach(var item in _subItems)
-            {
-                sb.AppendLine(item.Serialize(prefix));
-            }
-
-            return sb.ToString().TrimEnd();
+            base.NotifyPositionChangeToParent();
         }
 
         public override DrawableItem Clone()
@@ -184,34 +113,34 @@ namespace ThePainterFormsTest.Models
         {
             int x = int.MaxValue;
             int y = int.MaxValue;
-            int width = 0;
-            int heigth = 0;
+            int farWidth = 0;
+            int farHeight = 0;
 
             foreach(var item in _subItems)
             {
                 x = item.X < x ? item.X : x;
                 y = item.Y < y ? item.Y : y;
 
-                width = (item.X + item.Width) > width ? item.X + item.Width : width;
-                heigth = (item.Y + item.Height) > heigth ? item.Y + item.Height : heigth;
+                farWidth = (item.X + item.Width) > farWidth ? item.X + item.Width : farWidth;
+                farHeight = (item.Y + item.Height) > farHeight ? item.Y + item.Height : farHeight;
             }
 
             X = x;
             Y = y;
-            Width = width;
-            Height = heigth;
+            Width = farWidth - X;
+            Height = farHeight - Y;
         }
 
         public override void Accept(IVisitor visitor)
         {
-            visitor.Visit(this);
+            visitor.BeforeGroup(this);
 
             foreach (var item in Items)
             {
                 item.Accept(visitor);
             }
 
-            CalculatePositions(); //TODO: find other way for this, maybe lazy while getting ??
+            visitor.AfterGroup(this);
         }
     }
 }

@@ -9,17 +9,20 @@ using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Commands
 {
-    class SelectItem : ICommand
+    public class SelectItemWithDeselectFromTree : ICommand
     {
         private DrawableItem _item;
+        private DrawableItem _previousSelectedItem;
 
-        public SelectItem(DrawableItem item)
+        public SelectItemWithDeselectFromTree(DrawableItem item)
         {
             _item = item;
         }
 
         public void Execute(Canvas canvas)
         {
+            _previousSelectedItem = canvas.SelectedItem;
+            _previousSelectedItem?.Accept(DeselectVisitor.Instance);
 
             _item.Accept(SelectVisitor.Instance);
             canvas.SelectedItem = _item;
@@ -30,7 +33,8 @@ namespace ThePainterFormsTest.Commands
         public void Undo(Canvas canvas)
         {
             _item.Accept(DeselectVisitor.Instance);
-            canvas.SelectedItem = null;
+            _previousSelectedItem?.Accept(SelectVisitor.Instance);
+            canvas.SelectedItem = _previousSelectedItem;
 
             Controller.Instance.InvalidateCanvas();
         }

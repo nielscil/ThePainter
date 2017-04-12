@@ -21,14 +21,6 @@ namespace ThePainterFormsTest.Models
 
         public Ellipse(int x, int y, int width, int height) : base(x, y, width, height) { }
 
-        public override void Draw(Graphics graphics)
-        {
-            using (Pen pen = new Pen(Color))
-            {
-                graphics.DrawEllipse(pen, _x, _y, _width, _height);
-            }
-        }
-
         public override DrawableItem Clone()
         {
             Ellipse ellipse = new Ellipse(X, Y, Width, Height);

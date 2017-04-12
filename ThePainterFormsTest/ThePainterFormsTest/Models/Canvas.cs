@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThePainterFormsTest.Commands;
 using ThePainterFormsTest.Controllers;
+using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Models
 {
@@ -41,11 +42,11 @@ namespace ThePainterFormsTest.Models
                     _tempItem = null;
                 }
 
-                Controller.SelectNode(_selectedItem, false);
+                //Controller.SelectNode(_selectedItem, false);
 
                 _selectedItem = value;
 
-                Controller.SelectNode(_selectedItem, true);
+                //Controller.SelectNode(_selectedItem, true);
 
                 if (_selectedItem != null)
                 {
@@ -96,12 +97,27 @@ namespace ThePainterFormsTest.Models
 
         public void AddGroup(Group group, int index)
         {
-            foreach (var item in group.Items)
+            if(group.Parent == null)
             {
-                RemoveItem(item);
+                foreach (var item in group.Items)
+                {
+                    RemoveItem(item);
+                }
+
+                AddItem(group, index);
             }
 
-            AddItem(group, index);
+            else if(group.Parent is Group)
+            {
+                Group parent = group.Parent as Group;
+                foreach (var item in group.Items)
+                {
+                    parent.RemoveItem(item);
+                }
+
+                parent.AddItem(group, index);
+            }
+            
         }
 
         public void AddItem(DrawableItem item, int index)
@@ -159,11 +175,12 @@ namespace ThePainterFormsTest.Models
 
         public void Draw(Graphics graphics)
         {
+            IVisitor drawVisitor = new DrawVisitor(graphics);
             foreach(var item in Items)
             {
-                item.Draw(graphics);
+                item.Accept(drawVisitor);
             }
-            _tempItem?.Draw(graphics);
+            _tempItem?.Accept(drawVisitor);
         }
 
         #region For Showing animation while changing
@@ -185,7 +202,7 @@ namespace ThePainterFormsTest.Models
             }
             else
             {
-                _tempItem.Resize(begin, end);
+                _tempItem.Accept(new TempResizeVisitor(begin, end));
             }
 
             Controller.InvalidateCanvas();
@@ -195,7 +212,7 @@ namespace ThePainterFormsTest.Models
         {
             if(HasSelected)
             {
-                _tempItem.Move(begin, end);
+                _tempItem.Accept(new TempMoveVisitor(begin, end));
 
                 Controller.InvalidateCanvas();
             }
@@ -205,7 +222,7 @@ namespace ThePainterFormsTest.Models
         {
             if (HasSelected)
             {
-                _tempItem.Resize(begin, end);
+                _tempItem.Accept(new TempResizeVisitor(begin, end));
 
                 Controller.InvalidateCanvas();
             }            

@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using ThePainterFormsTest.Controllers;
 using ThePainterFormsTest.Models;
+using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Commands
 {
-    class DeselectItem : ICommand
+    public class DeselectItem : ICommand
     {
         private DrawableItem _item;
 
@@ -19,16 +20,18 @@ namespace ThePainterFormsTest.Commands
 
         public void Execute(Canvas canvas)
         {
-            _item.Deselect();
+            _item.Accept(DeselectVisitor.Instance);
             canvas.SelectedItem = null;
+            Controller.Instance.SelectNode(_item, false);
 
             Controller.Instance.InvalidateCanvas();
         }
 
         public void Undo(Canvas canvas)
         {
-            _item.Select();
+            _item.Accept(SelectVisitor.Instance);
             canvas.SelectedItem = _item;
+            Controller.Instance.SelectNode(_item, true);
 
             Controller.Instance.InvalidateCanvas();
         }

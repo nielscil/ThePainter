@@ -9,7 +9,8 @@ namespace ThePainterFormsTest.Visitors
 {
     public interface IVisitor
     {
-        void Visit(Group group);
+        void BeforeGroup(Group group);
+        void AfterGroup(Group group);
         void Visit(Ellipse ellipse);
         void Visit(Rectangle rectangle);
     }

@@ -11,11 +11,11 @@ namespace ThePainterFormsTest.Models
 
         public int X { get; set; }
 
-        public virtual int Y { get; set; }
+        public int Y { get; set; }
 
-        public virtual int Height { get; set; }
+        public int Height { get; set; }
 
-        public virtual int Width { get; set; }
+        public int Width { get; set; }
 
         public Color Color { get; set; } = Color.Black;
 
@@ -35,32 +35,6 @@ namespace ThePainterFormsTest.Models
         public DrawableItem()
         {}
 
-        public virtual void Resize(Point begin, Point end)
-        {
-            Height += end.Y - begin.Y;
-            Width += end.X - begin.X;
-        }
-
-        public virtual void Resize(int width, int height)
-        {
-            Width = width;
-            Height = height;
-        }
-
-        public virtual void Move(Point begin, Point end)
-        {
-            X += end.X - begin.X;
-            Y += end.Y - begin.Y;
-        }
-
-        public virtual void Move(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public abstract void Draw(Graphics graphics);
-
         public virtual bool IsOnLocation(Point point)
         {
             bool isXInItem = (point.X >= X && point.X <= X + Width) || (point.X >= X + Width && point.X <= X);
@@ -68,19 +42,12 @@ namespace ThePainterFormsTest.Models
             return isXInItem && isYInItem;
         }
 
-        public virtual void Select()
+        public virtual void NotifyPositionChangeToParent()
         {
-            Color = Color.Red;
-        }
-
-        public virtual void Deselect()
-        {
-            Color = Color.Black;
-        }
-
-        public virtual string Serialize(string prefix)
-        {
-            return $"{prefix}{Name} {X} {Y} {Width} {Height}";
+            if(Parent != null)
+            {
+                Parent.NotifyPositionChangeToParent();
+            }
         }
 
         public abstract void Accept(IVisitor visitor);

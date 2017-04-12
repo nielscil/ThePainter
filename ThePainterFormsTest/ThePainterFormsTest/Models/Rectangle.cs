@@ -20,18 +20,6 @@ namespace ThePainterFormsTest.Models
 
         public Rectangle(int x, int y, int width, int height) : base(x, y, width, height) { }
 
-        public override void Draw(Graphics graphics)
-        {
-            using (Pen p = new Pen(Color))
-            {
-                graphics.DrawLine(p, X, Y, X + Width, Y);
-                graphics.DrawLine(p, X, Y, X, Y + Height);
-                graphics.DrawLine(p, X + Width, Y, X + Width, Y + Height);
-                graphics.DrawLine(p, X, Y + Height, X + Width, Y + Height);
-            }
-                
-        }
-
         public override DrawableItem Clone()
         {
             Rectangle rect = new Rectangle(X, Y, Width, Height);

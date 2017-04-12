@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Models
 {
@@ -244,12 +245,13 @@ namespace ThePainterFormsTest.Models
 
         private string SerializeItems(List<DrawableItem> items)
         {
-            string serialized = "";
-
             Group group = new Group(items);
-            serialized = group.Serialize(string.Empty);
-                
-            return serialized;
+
+            FileVisitor visitor = new FileVisitor();
+
+            group.Accept(visitor);
+
+            return visitor.StringBuilder.ToString();
         }
 
         #endregion
