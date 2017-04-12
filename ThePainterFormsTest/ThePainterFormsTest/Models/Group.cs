@@ -38,6 +38,22 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+        public int Count
+        {
+            get
+            {
+                int i = 0;
+
+                foreach (var item in Items)
+                {
+                    if (!(item is Ornament))
+                        i++;
+                }
+
+                return i;
+            }
+        }
+
         private List<DrawableItem> _subItems = new List<DrawableItem>();        
 
         public Group()
@@ -59,7 +75,7 @@ namespace ThePainterFormsTest.Models
 
         public void AddItem(DrawableItem item, int index)
         {
-            _subItems.Add(item);
+            _subItems.Insert(index, item);
 
             Node.Nodes.Insert(index, item.Node);
 

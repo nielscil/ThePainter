@@ -11,7 +11,22 @@ namespace ThePainterFormsTest.Visitors
     {
         public StringBuilder StringBuilder { get; } = new StringBuilder();
         private string _prefix = string.Empty;
-        private bool isInOrnament = false;
+
+        private int _isInOrnamentCount = 0;
+        private bool isInOrnament
+        {
+            get
+            {
+                return _isInOrnamentCount > 0;
+            }
+            set
+            {
+                if (value)
+                    _isInOrnamentCount++;
+                else
+                    _isInOrnamentCount--;
+            }
+        }
 
         private void DoVisit(DrawableItem item)
         {
@@ -25,7 +40,7 @@ namespace ThePainterFormsTest.Visitors
         {
             if(!isInOrnament)
             {
-                StringBuilder.AppendLine($"{_prefix}group {group.Items.Count}");
+                StringBuilder.AppendLine($"{_prefix}group {group.Count}");
                 _prefix += "\t";
             }
         }
@@ -45,7 +60,8 @@ namespace ThePainterFormsTest.Visitors
 
         public void BeforeOrnament(Ornament ornament)
         {
-            StringBuilder.AppendLine($"{_prefix}ornament {ornament.GetState()} \"{ornament.Text}\"");
+            if(!isInOrnament)
+                StringBuilder.AppendLine($"{_prefix}ornament {ornament.GetState()} \"{ornament.Text}\"");
             isInOrnament = true;
         }
 

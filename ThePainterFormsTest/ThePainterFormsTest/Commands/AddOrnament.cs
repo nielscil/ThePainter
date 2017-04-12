@@ -17,6 +17,7 @@ namespace ThePainterFormsTest.Commands
 
         public AddOrnament(DrawableItem selectedItem, string text, IOrnamentState state, int index)
         {
+            _index = index;
             _selectedItem = selectedItem;
             _ornament = new Ornament(text, selectedItem, state);
         }

@@ -92,7 +92,7 @@ namespace ThePainterFormsTest.Controllers
                     IOrnamentState state = form.State;
                     int index = GetIndex(_canvas.SelectedItem);
 
-                    if (index != -1)
+                    if (index != -1 && state != null)
                     {
                         CommandExecuter.Execute(new AddOrnament(_canvas.SelectedItem, text, state, index));
                     }

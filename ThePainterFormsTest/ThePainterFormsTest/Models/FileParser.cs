@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThePainterFormsTest.Visitors;
 using ThePainterFormsTest.Strategy;
+using ThePainterFormsTest.States;
 
 namespace ThePainterFormsTest.Models
 {
@@ -46,53 +47,47 @@ namespace ThePainterFormsTest.Models
                 return null;
             }
 
-            Line = 0;
+            Line = 1;
 
-            using (StreamReader stream = File.OpenText(path))
-            {
-                return Parser(stream);
-            }
+            string[] lines = File.ReadAllLines(path);
+
+            return Parser(lines);
         }
 
-        private List<DrawableItem> Parser(StreamReader reader)
+
+        private List<DrawableItem> Parser(string[] lines)
         {
             List<DrawableItem> items = new List<DrawableItem>();
 
-            if(!reader.EndOfStream)
-            {
-                reader.ReadLine();
-            }
-
-            while(!reader.EndOfStream)
+            while(Line < lines.Length)
             {
                 try
                 {
-                    items.Add(GetItem(reader));
+                    items.AddRange(GetItems(lines));
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     MessageBox.Show(e.Message, "The Painter", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
+                Line++;
             }
 
             return items;
         }
 
-        private DrawableItem GetItem(StreamReader reader)
+        private List<DrawableItem> GetItems(string[] lines)
         {
-            Line++;
-            string line = reader.ReadLine();
+            string line = lines[Line].Trim();
             string itemName = GetItemName(line);
 
             DrawableItem item = null;
             switch (itemName)
             {
                 case GROUP:
-                    item = GroupParser(reader, GetGroupItemCount(line));
+                    item = GroupParser(lines, GetGroupItemCount(line));
                     break;
                 case ORNAMENT:
-                    //TODO: add text
-                    break;
+                    return OrnamentParser(lines, line);
                 case ELLIPSE:
                     item = EllipseParser(line);
                     break;
@@ -103,12 +98,74 @@ namespace ThePainterFormsTest.Models
                     throw new Exception("Not Parsed");
             }
 
-            return item;
+            return new List<DrawableItem>() { item };
         }
 
-        private void OrnamentParser(string line)
+        private List<DrawableItem> OrnamentParser(string[] lines, string line)
         {
+            List<string> newOrnaments = new List<string>();
 
+            while(IsOrnament(line) && Line < lines.Length)
+            {
+                newOrnaments.Add(line);
+                Line++;
+                line = lines[Line].Trim();
+            }
+
+            List<DrawableItem> items = GetItems(lines);
+
+            newOrnaments.Reverse();
+                
+            foreach(var l in newOrnaments)
+            {
+                items.Insert(0, GetOrnament(l, items.First()));
+            }
+
+            return items;
+        }
+
+        private Ornament GetOrnament(string line, DrawableItem child)
+        {
+            string[] splittedLine = line.Split(' ');
+            if (child != null && splittedLine.Length == 3)
+            {
+
+                IOrnamentState state = GetOrnamentState(splittedLine[1]);
+
+                return new Ornament(splittedLine[2].Trim('"'), child, state);
+            }
+
+            throw new Exception($"Line[{Line}]: Could not parse Ornament");
+        }
+
+        private IOrnamentState GetOrnamentState(string stateString)
+        {
+            IOrnamentState state;
+
+            switch (stateString)
+            {
+                case "top":
+                    state = OrnamentTop.Instance;
+                    break;
+                case "bottom":
+                    state = OrnamentBottom.Instance;
+                    break;
+                case "left":
+                    state = OrnamentLeft.Instance;
+                    break;
+                case "right":
+                    state = OrnamentRight.Instance;
+                    break;
+                default:
+                    throw new Exception($"Line[{Line}]: Could not parse Ornament");
+            }
+
+            return state;
+        }
+
+        private bool IsOrnament(string line)
+        {
+            return GetItemName(line) == ORNAMENT;
         }
 
         private int GetGroupItemCount(string line)
@@ -125,19 +182,24 @@ namespace ThePainterFormsTest.Models
             return count;
         }
 
-        private Group GroupParser(StreamReader reader, int count)
+        private Group GroupParser(string[] lines, int count)
         {
             List<DrawableItem> items = new List<DrawableItem>();
 
-            for(int i = 0; i < count;)
+            for (int i = 0; i < count;)
             {
-                DrawableItem item = GetItem(reader);
-                items.Add(item);
+                Line++;
 
-                //if(!(item is Ornament)) //ornament does not count as figure!
-                //{
-                i++;
-                //}
+                List<DrawableItem> newItems = GetItems(lines);
+                items.AddRange(newItems);
+
+                foreach(var item in newItems)
+                {
+                    if (!(item is Ornament)) //ornament does not count as figure!
+                    {
+                        i++;
+                    }
+                }
             }
 
             return new Group(items);
