@@ -35,14 +35,9 @@ namespace ThePainterFormsTest.Visitors
             DoVisit(group);
         }
 
-        public void Visit(Models.Rectangle rectangle)
+        public void Visit(BasicFigure figure)
         {
-            DoVisit(rectangle);
-        }
-
-        public void Visit(Ellipse ellipse)
-        {
-            DoVisit(ellipse);
+            DoVisit(figure);
         }
 
         private void DoVisit(DrawableItem item)

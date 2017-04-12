@@ -18,32 +18,22 @@ namespace ThePainterFormsTest.Visitors
             _y = y;
         }
 
-        public void Visit(Rectangle rectangle)
-        {
-            DoVisit(rectangle);
-        }
-
-        public void Visit(Ellipse ellipse)
-        {
-            DoVisit(ellipse);
-        }
-
         public void BeforeGroup(Group group)
         {
             //DO nothing
         }
 
-        private void DoVisit(DrawableItem item)
-        {
-                item.X += _x;
-                item.Y += _y;
-
-                item.NotifyPositionChangeToParent();
-        }
-
         public void AfterGroup(Group group)
         {
             //Do nothing
+        }
+
+        public void Visit(BasicFigure figure)
+        {
+            figure.X += _x;
+            figure.Y += _y;
+
+            figure.NotifyPositionChangeToParent();
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using ThePainterFormsTest.Commands;
 using ThePainterFormsTest.Controllers;
 using ThePainterFormsTest.Visitors;
+using ThePainterFormsTest.Strategy;
 
 namespace ThePainterFormsTest.Models
 {
@@ -192,11 +193,11 @@ namespace ThePainterFormsTest.Models
             {
                 if (DrawingMode == Mode.Rectange)
                 {
-                    _tempItem = new Rectangle(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y);
+                    _tempItem = new BasicFigure(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y, RectangleStrategyObject.Instance);
                 }
                 else
                 {
-                    _tempItem = new Ellipse(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y);
+                    _tempItem = new BasicFigure(begin.X, begin.Y, end.X - begin.X, end.Y - begin.Y, EllipseStrategyObject.Instance);
                 }
                 _tempItem.Color = Color.Gray;
             }

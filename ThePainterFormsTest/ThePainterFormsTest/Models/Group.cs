@@ -13,13 +13,6 @@ namespace ThePainterFormsTest.Models
 {
     public class Group : DrawableItem
     {
-        public override string Name
-        {
-            get
-            {
-                return "group";
-            }
-        }
         public List<DrawableItem> Items
         {
             get
@@ -28,8 +21,6 @@ namespace ThePainterFormsTest.Models
             }
         }
 
-
-        protected PainterTreeNode _node;
         public override PainterTreeNode Node
         {
             get
@@ -44,10 +35,6 @@ namespace ThePainterFormsTest.Models
                     }
                 }
                 return _node;
-            }
-            protected set
-            {
-                _node = value;
             }
         }
 
@@ -141,6 +128,11 @@ namespace ThePainterFormsTest.Models
             }
 
             visitor.AfterGroup(this);
+        }
+
+        public override string ToString()
+        {
+            return "group";
         }
     }
 }

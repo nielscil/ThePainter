@@ -36,19 +36,14 @@ namespace ThePainterFormsTest.Visitors
             DoVisit(group);
         }
 
-        public void Visit(Models.Rectangle rectangle)
-        {
-            DoVisit(rectangle);
-        }
-
-        public void Visit(Ellipse ellipse)
-        {
-            DoVisit(ellipse);
-        }
-
         private void DoVisit(DrawableItem item)
         {
             item.Color = Color.Black;
+        }
+
+        public void Visit(BasicFigure figure)
+        {
+            DoVisit(figure);
         }
     }
 }

@@ -11,7 +11,6 @@ namespace ThePainterFormsTest.Visitors
     {
         void BeforeGroup(Group group);
         void AfterGroup(Group group);
-        void Visit(Ellipse ellipse);
-        void Visit(Rectangle rectangle);
+        void Visit(BasicFigure figure);
     }
 }

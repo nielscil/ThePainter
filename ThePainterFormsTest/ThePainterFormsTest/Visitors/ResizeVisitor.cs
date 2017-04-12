@@ -18,24 +18,6 @@ namespace ThePainterFormsTest.Visitors
             _height = heigth;
         }
 
-        public void Visit(Rectangle rectangle)
-        {
-            DoVisit(rectangle);
-        }
-
-        public void Visit(Ellipse ellipse)
-        {
-            DoVisit(ellipse);
-        }
-
-        private void DoVisit(DrawableItem item)
-        {
-            item.Width += _width;
-            item.Height += _height;
-
-            item.NotifyPositionChangeToParent();
-        }
-
         public void BeforeGroup(Group group)
         {
             //Do nothing here ??
@@ -44,6 +26,14 @@ namespace ThePainterFormsTest.Visitors
         public void AfterGroup(Group group)
         {
             //Do nothing here ??
+        }
+
+        public void Visit(BasicFigure figure)
+        {
+            figure.Width += _width;
+            figure.Height += _height;
+
+            figure.NotifyPositionChangeToParent();
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThePainterFormsTest.Visitors;
+using ThePainterFormsTest.Strategy;
 
 namespace ThePainterFormsTest.Models
 {
@@ -155,7 +156,7 @@ namespace ThePainterFormsTest.Models
             return count;
         }
 
-        private Rectangle RectangleParser(string line)
+        private BasicFigure RectangleParser(string line)
         {
             string[] options = GetOptions(line);
             int x, y, width, height;
@@ -169,14 +170,14 @@ namespace ThePainterFormsTest.Models
 
                 if (canParseX && canParseY && canParseWidth && canParseHeight)
                 {
-                    return new Rectangle(x, y, width, height);
+                    return new BasicFigure(x, y, width, height, RectangleStrategyObject.Instance);
                 }
             }
 
             throw new Exception($"Line[{Line}]: Could not parse Rectangle");
         }
 
-        private Ellipse EllipseParser(string line)
+        private BasicFigure EllipseParser(string line)
         {
             string[] options = GetOptions(line);
             int x, y, width, height;
@@ -190,7 +191,7 @@ namespace ThePainterFormsTest.Models
 
                 if (canParseX && canParseY && canParseWidth && canParseHeight)
                 {
-                    return new Ellipse(x, y, width, height);
+                    return new BasicFigure(x, y, width, height, EllipseStrategyObject.Instance);
                 }
             }
 

@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using ThePainterFormsTest.Controllers;
 using ThePainterFormsTest.Models;
+using ThePainterFormsTest.Strategy;
 
 namespace ThePainterFormsTest.Commands
 {
     class AddEllipse : ICommand
     {
         private int _x, _y, _width, _heigth;
-        private Ellipse _ellipse;
+        private BasicFigure _ellipse;
 
         public AddEllipse(int x, int y, int width, int height)
         {
@@ -19,7 +20,7 @@ namespace ThePainterFormsTest.Commands
             _y = y;
             _width = width;
             _heigth = height;
-            _ellipse = new Ellipse(_x, _y, _width, _heigth);
+            _ellipse = new BasicFigure(_x, _y, _width, _heigth, EllipseStrategyObject.Instance);
         }
 
         public void Execute(Canvas canvas)

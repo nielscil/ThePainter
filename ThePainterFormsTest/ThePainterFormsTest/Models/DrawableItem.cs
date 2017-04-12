@@ -6,8 +6,18 @@ namespace ThePainterFormsTest.Models
 {
     public abstract class DrawableItem
     {
-
-        public virtual PainterTreeNode Node { get; protected set; }
+        protected PainterTreeNode _node;
+        public virtual PainterTreeNode Node
+        {
+            get
+            {
+                if(_node == null)
+                {
+                    _node = new PainterTreeNode(this);
+                }
+                return _node;
+            }
+        }
 
         public int X { get; set; }
 
@@ -21,15 +31,12 @@ namespace ThePainterFormsTest.Models
 
         public DrawableItem Parent { get; set; }
 
-        public abstract string Name { get; }
-
         public DrawableItem(int x, int y, int width, int height)
         {
             X = x;
             Y = y;
             Width = width;
             Height = height;
-            Node = new PainterTreeNode(this);
         }
 
         public DrawableItem()
@@ -54,9 +61,5 @@ namespace ThePainterFormsTest.Models
 
         public abstract DrawableItem Clone();
 
-        public override string ToString()
-        {
-            return Name;
-        }
     }
 }

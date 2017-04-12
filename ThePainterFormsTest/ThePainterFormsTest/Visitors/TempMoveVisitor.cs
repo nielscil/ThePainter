@@ -20,16 +20,10 @@ namespace ThePainterFormsTest.Visitors
             _end = end;
         }
 
-        public void Visit(Models.Rectangle rectangle)
+        public void Visit(BasicFigure figure)
         {
-            rectangle.X += _end.X - _begin.X;
-            rectangle.Y += _end.Y - _begin.Y;
-        }
-
-        public void Visit(Ellipse ellipse)
-        {
-            ellipse.X += _end.X - _begin.X;
-            ellipse.Y += _end.Y - _begin.Y;
+            figure.X += _end.X - _begin.X;
+            figure.Y += _end.Y - _begin.Y;
         }
 
         public void BeforeGroup(Group group)
