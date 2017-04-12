@@ -11,26 +11,47 @@ namespace ThePainterFormsTest.Visitors
     {
         public StringBuilder StringBuilder { get; } = new StringBuilder();
         private string _prefix = string.Empty;
+        private bool isInOrnament = false;
 
         private void DoVisit(DrawableItem item)
         {
-            StringBuilder.AppendLine($"{_prefix}{item.ToString()} {item.X} {item.Y} {item.Width} {item.Height}");
+            if(!isInOrnament)
+            {
+                StringBuilder.AppendLine($"{_prefix}{item.ToString()} {item.X} {item.Y} {item.Width} {item.Height}");
+            }
         }
 
         public void BeforeGroup(Group group)
         {
-            StringBuilder.AppendLine($"{_prefix}group {group.Items.Count}");
-            _prefix += "\t";
+            if(!isInOrnament)
+            {
+                StringBuilder.AppendLine($"{_prefix}group {group.Items.Count}");
+                _prefix += "\t";
+            }
         }
 
         public void AfterGroup(Group group)
         {
-            _prefix = _prefix.Remove(_prefix.Length - 1);
+            if(!isInOrnament)
+            {
+                _prefix = _prefix.Remove(_prefix.Length - 1);
+            }
         }
 
         public void Visit(BasicFigure figure)
         {
             DoVisit(figure);
+        }
+
+        public void BeforeOrnament(Ornament ornament)
+        {
+            StringBuilder.AppendLine($"{_prefix}ornament {ornament.GetState()} \"{ornament.Text}\"");
+            isInOrnament = true;
+        }
+
+        public void AfterOrnament(Ornament ornament)
+        {
+            isInOrnament = false;
         }
     }
 }

@@ -35,5 +35,15 @@ namespace ThePainterFormsTest.Visitors
         {
             //do nothing I guess??
         }
+
+        public void BeforeOrnament(Ornament ornament)
+        {
+            //Do nothing
+        }
+
+        public void AfterOrnament(Ornament ornament)
+        {
+            //Do nothing I guess??
+        }
     }
 }

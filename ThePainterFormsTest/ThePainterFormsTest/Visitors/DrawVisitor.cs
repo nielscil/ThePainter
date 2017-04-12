@@ -31,5 +31,15 @@ namespace ThePainterFormsTest.Visitors
         {
             figure.Draw(_graphics);
         }
+
+        public void BeforeOrnament(Ornament ornament)
+        {
+            ornament.Draw(_graphics);
+        }
+
+        public void AfterOrnament(Ornament ornament)
+        {
+            //Do nothing I guess??
+        }
     }
 }

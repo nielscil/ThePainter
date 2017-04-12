@@ -38,7 +38,8 @@ namespace ThePainterFormsTest
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
-            this.treeView = new PainterTreeView();
+            this.treeView = new ThePainterFormsTest.Controls.PainterTreeView();
+            this.button8 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -111,25 +112,36 @@ namespace ThePainterFormsTest
             // 
             this.button7.Location = new System.Drawing.Point(1132, 152);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(266, 40);
+            this.button7.Size = new System.Drawing.Size(130, 40);
             this.button7.TabIndex = 9;
             this.button7.Text = "Clear Canvas";
             this.button7.UseVisualStyleBackColor = true;
             // 
             // treeView
             // 
-            this.treeView.Location = new System.Drawing.Point(1132, 208);
+            this.treeView.Location = new System.Drawing.Point(1132, 198);
             this.treeView.Name = "treeView";
             this.treeView.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
             this.treeView.SelectionForeColor = System.Drawing.Color.White;
-            this.treeView.Size = new System.Drawing.Size(260, 392);
+            this.treeView.Size = new System.Drawing.Size(260, 402);
             this.treeView.TabIndex = 10;
+            // 
+            // button8
+            // 
+            this.button8.Enabled = false;
+            this.button8.Location = new System.Drawing.Point(1268, 152);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(130, 40);
+            this.button8.TabIndex = 11;
+            this.button8.Text = "Add Ornament";
+            this.button8.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1404, 612);
+            this.Controls.Add(this.button8);
             this.Controls.Add(this.treeView);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
@@ -156,6 +168,7 @@ namespace ThePainterFormsTest
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private PainterTreeView treeView;
+        private System.Windows.Forms.Button button8;
     }
 }
 

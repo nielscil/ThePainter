@@ -35,5 +35,15 @@ namespace ThePainterFormsTest.Visitors
 
             figure.NotifyPositionChangeToParent();
         }
+
+        public void BeforeOrnament(Ornament ornament)
+        {
+            //Do nothing
+        }
+
+        public void AfterOrnament(Ornament ornament)
+        {
+            //Do nothing I guess??
+        }
     }
 }

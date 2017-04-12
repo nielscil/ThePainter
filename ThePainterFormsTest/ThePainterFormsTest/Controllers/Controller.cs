@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using ThePainterFormsTest.Commands;
 using ThePainterFormsTest.Controls;
 using ThePainterFormsTest.Models;
+using ThePainterFormsTest.States;
 
 namespace ThePainterFormsTest.Controllers
 {
@@ -76,6 +77,27 @@ namespace ThePainterFormsTest.Controllers
             _form.ClearCanvasButton.Click += ClearCanvasButton_Click;
             _form.AddGroupButton.Click += AddGroupButton_Click;
             _form.RemoveGroupButton.Click += RemoveGroupButton_Click;
+            _form.AddOrnamentButton.Click += AddOrnament_Click;
+        }
+
+        private void AddOrnament_Click(object sender, EventArgs e)
+        {
+            using (var form = new OrnamentForm())
+            {
+                var result = form.ShowDialog();
+
+                if(result == DialogResult.OK)
+                {
+                    string text = form.OrnamentText;
+                    IOrnamentState state = form.State;
+                    int index = GetIndex(_canvas.SelectedItem);
+
+                    if (index != -1)
+                    {
+                        CommandExecuter.Execute(new AddOrnament(_canvas.SelectedItem, text, state, index));
+                    }
+                }
+            }
         }
 
         private void RemoveGroupButton_Click(object sender, EventArgs e)
@@ -140,6 +162,22 @@ namespace ThePainterFormsTest.Controllers
                 }
             }
             return low;
+        }
+
+        private int GetIndex(DrawableItem item)
+        {
+            int index = -1;
+
+            if(item.Parent == null)
+            {
+                index = _canvas.Items.IndexOf(item);
+            }
+            else if(item.Parent is Group)
+            {
+                index =(item.Parent as Group).Items.IndexOf(item);
+            }
+
+            return index;
         }
 
         private bool _listBoxHasFocus = false;
@@ -331,6 +369,11 @@ namespace ThePainterFormsTest.Controllers
         public void EnableRemoveGroupButton(bool enabled)
         {
             _form.RemoveGroupButton.Enabled = enabled;
+        }
+
+        public void EnableAddOrnamentButton(bool enabled)
+        {
+            _form.AddOrnamentButton.Enabled = enabled;
         }
 
         #region Mouse events

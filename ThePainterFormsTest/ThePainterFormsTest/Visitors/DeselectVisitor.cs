@@ -45,5 +45,15 @@ namespace ThePainterFormsTest.Visitors
         {
             DoVisit(figure);
         }
+
+        public void BeforeOrnament(Ornament ornament)
+        {
+            DoVisit(ornament);
+        }
+
+        public void AfterOrnament(Ornament ornament)
+        {
+            //Do nothing I guess??
+        }
     }
 }

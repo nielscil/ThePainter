@@ -12,5 +12,7 @@ namespace ThePainterFormsTest.Visitors
         void BeforeGroup(Group group);
         void AfterGroup(Group group);
         void Visit(BasicFigure figure);
+        void BeforeOrnament(Ornament ornament);
+        void AfterOrnament(Ornament ornament);
     }
 }

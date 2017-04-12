@@ -53,6 +53,14 @@ namespace ThePainterFormsTest
             }
         }
 
+        public Button AddOrnamentButton
+        {
+            get
+            {
+                return button8;
+            }
+        }
+
         public Button AddGroupButton
         {
             get

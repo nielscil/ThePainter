@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Commands\AddEllipse.cs" />
     <Compile Include="Commands\AddGroup.cs" />
+    <Compile Include="Commands\AddOrnament.cs" />
     <Compile Include="Commands\AddRectangle.cs" />
     <Compile Include="Commands\ChangeDrawingMode.cs" />
     <Compile Include="Commands\ClearCanvas.cs" />
@@ -73,16 +74,26 @@
     <Compile Include="Models\BasicFigure.cs" />
     <Compile Include="Models\Canvas.cs" />
     <Compile Include="Models\DrawableItem.cs" />
-    <Compile Include="Models\Ellipse.cs" />
     <Compile Include="Models\FileParser.cs" />
     <Compile Include="Models\Group.cs" />
-    <Compile Include="Models\Rectangle.cs" />
+    <Compile Include="Models\Ornament.cs" />
     <Compile Include="Controls\PainterTreeNode.cs" />
     <Compile Include="Controls\PainterTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="OrnamentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OrnamentForm.Designer.cs">
+      <DependentUpon>OrnamentForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="States\IOrnamentState.cs" />
+    <Compile Include="States\OrnamentBottom.cs" />
+    <Compile Include="States\OrnamentLeft.cs" />
+    <Compile Include="States\OrnamentRight.cs" />
+    <Compile Include="States\OrnamentTop.cs" />
     <Compile Include="Strategy\EllipseStrategyObject.cs" />
     <Compile Include="Strategy\IStrategy.cs" />
     <Compile Include="Strategy\RectangleStrategyObject.cs" />
@@ -98,6 +109,9 @@
     <Compile Include="Visitors\TempResizeVisitor.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OrnamentForm.resx">
+      <DependentUpon>OrnamentForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -44,5 +44,15 @@ namespace ThePainterFormsTest.Visitors
         {
             item.Color = Color.Red;
         }
+
+        public void BeforeOrnament(Ornament ornament)
+        {
+            DoVisit(ornament);
+        }
+
+        public void AfterOrnament(Ornament ornament)
+        {
+            //Do nothing I guess??
+        }
     }
 }

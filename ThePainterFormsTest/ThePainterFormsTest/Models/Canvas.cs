@@ -39,15 +39,11 @@ namespace ThePainterFormsTest.Models
 
                 if (value == null)
                 {
-                    
+                    Controller.EnableAddOrnamentButton(false);
                     _tempItem = null;
                 }
 
-                //Controller.SelectNode(_selectedItem, false);
-
                 _selectedItem = value;
-
-                //Controller.SelectNode(_selectedItem, true);
 
                 if (_selectedItem != null)
                 {
@@ -56,6 +52,15 @@ namespace ThePainterFormsTest.Models
                     if (_selectedItem is Group)
                     {
                         Controller.EnableRemoveGroupButton(true);
+                    }
+
+                    if(!(_selectedItem is Ornament))
+                    {
+                        Controller.EnableAddOrnamentButton(true);
+                    }
+                    else
+                    {
+                        Controller.EnableAddOrnamentButton(false);
                     }
                 }
             }
@@ -121,6 +126,18 @@ namespace ThePainterFormsTest.Models
             
         }
 
+        public void AddOrnament(Ornament ornament,int index)
+        {
+            if (ornament.Parent == null)
+            {
+                AddItem(ornament, index);
+            }
+            else if (ornament.Parent is Group)
+            {
+                (ornament.Parent as Group).AddItem(ornament, index);
+            }
+        }
+
         public void AddItem(DrawableItem item, int index)
         {
             Items.Insert(index, item);
@@ -146,7 +163,7 @@ namespace ThePainterFormsTest.Models
             if (group.Parent == null)
             {
                 index = Items.IndexOf(group);
-                RemoveItem(group as DrawableItem);
+                RemoveItem(group);
 
                 List<DrawableItem> items = group.Items;
                 items.Reverse();
@@ -169,6 +186,24 @@ namespace ThePainterFormsTest.Models
                 {
                     parent.AddItem(item, index);
                 }
+            }
+
+            return index;
+        }
+
+        public int RemoveOrnament(Ornament ornament)
+        {
+            int index;
+            if (ornament.Parent == null)
+            {
+                index = Items.IndexOf(ornament);
+                RemoveItem(ornament);
+            }
+            else
+            {
+                Group parent = ornament.Parent as Group;
+                index = parent.Items.IndexOf(ornament);
+                parent.RemoveItem(ornament);
             }
 
             return index;
