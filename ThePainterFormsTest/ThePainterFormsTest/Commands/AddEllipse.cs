@@ -9,11 +9,21 @@ using ThePainterFormsTest.Strategy;
 
 namespace ThePainterFormsTest.Commands
 {
-    class AddEllipse : ICommand
+    /// <summary>
+    /// Add ellipse commandclass
+    /// </summary>
+    public class AddEllipse : ICommand
     {
         private int _x, _y, _width, _heigth;
         private BasicFigure _ellipse;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="x">x-coordinate</param>
+        /// <param name="y">y-coordinate</param>
+        /// <param name="width">width of ellipse</param>
+        /// <param name="height">heigth of ellipse</param>
         public AddEllipse(int x, int y, int width, int height)
         {
             _x = x;
@@ -23,6 +33,10 @@ namespace ThePainterFormsTest.Commands
             _ellipse = new BasicFigure(_x, _y, _width, _heigth, EllipseStrategyObject.Instance);
         }
 
+        /// <summary>
+        /// Executes the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Execute(Canvas canvas)
         {
             canvas.AddItem(_ellipse);
@@ -30,6 +44,10 @@ namespace ThePainterFormsTest.Commands
             Controller.Instance.InvalidateCanvas();
         }
 
+        /// <summary>
+        /// Undo's the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Undo(Canvas canvas)
         {
             canvas.RemoveItem(_ellipse);

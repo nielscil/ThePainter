@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// Temp move visitor for moving animation
+    /// </summary>
     public class TempMoveVisitor : IVisitor
     {
 

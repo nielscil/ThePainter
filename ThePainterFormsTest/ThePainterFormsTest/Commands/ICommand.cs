@@ -7,6 +7,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Commands
 {
+    /// <summary>
+    /// Icommand interface
+    /// </summary>
     public interface ICommand
     {
         void Execute(Canvas canvas);

@@ -11,6 +11,9 @@ using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Models
 {
+    /// <summary>
+    /// Ornament class
+    /// </summary>
     public class Ornament : DrawableItem
     {
         public string Text { get; private set; }
@@ -31,6 +34,12 @@ namespace ThePainterFormsTest.Models
         }
         private IOrnamentState _state;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="text">text</param>
+        /// <param name="child">child of ornament</param>
+        /// <param name="state">state of ornament</param>
         public Ornament(string text, DrawableItem child, IOrnamentState state) : base()
         {
             _state = state;
@@ -38,7 +47,9 @@ namespace ThePainterFormsTest.Models
             Child = child;
         }
 
-
+        /// <summary>
+        /// Set position
+        /// </summary>
         private void SetPosition()
         {
             X = Child.X;
@@ -47,22 +58,38 @@ namespace ThePainterFormsTest.Models
             Height = Child.Height;
         }
 
+        /// <summary>
+        /// Draw ornament
+        /// </summary>
+        /// <param name="graphics">graphics</param>
         public void Draw(Graphics graphics)
         {
             PointF point = _state.GetPosition(this);
             graphics.DrawString(Text, SystemFonts.DefaultFont, GetBrush(), point.X, point.Y);
         }
 
+        /// <summary>
+        /// Get brush
+        /// </summary>
+        /// <returns>brush color</returns>
         private Brush GetBrush()
         {
             return Color == Color.Red ? Brushes.Red : Brushes.Black;
         }
 
+        /// <summary>
+        /// Get state text
+        /// </summary>
+        /// <returns>state text</returns>
         public string GetState()
         {
             return _state.State;
         }
 
+        /// <summary>
+        /// Accept visitor
+        /// </summary>
+        /// <param name="visitor">visitor</param>
         public override void Accept(IVisitor visitor)
         {
             visitor.BeforeOrnament(this);
@@ -72,6 +99,10 @@ namespace ThePainterFormsTest.Models
             visitor.AfterOrnament(this);
         }
 
+        /// <summary>
+        /// Clones ornament
+        /// </summary>
+        /// <returns>clone</returns>
         public override DrawableItem Clone()
         {
             Ornament ornament = new Ornament(Text, Child, _state);
@@ -79,16 +110,20 @@ namespace ThePainterFormsTest.Models
             return ornament;
         }
 
+        /// <summary>
+        /// Notify position changed
+        /// </summary>
         public override void NotifyPositionChangeToParent()
         {
-            X = Child.X;
-            Y = Child.Y;
-            Width = Child.Width;
-            Height = Child.Height;
+            SetPosition();
 
             base.NotifyPositionChangeToParent();
         }
 
+        /// <summary>
+        /// To string override
+        /// </summary>
+        /// <returns>treeview text</returns>
         public override string ToString()
         {
             return $"Ornament({GetState()}) \"{Text}\"";

@@ -14,6 +14,9 @@ using ThePainterFormsTest.States;
 namespace ThePainterFormsTest.Controllers
 {
 
+    /// <summary>
+    /// Controller class of the application
+    /// </summary>
     public class Controller
     {
 
@@ -35,6 +38,9 @@ namespace ThePainterFormsTest.Controllers
 
         private Controller() { }
 
+        /// <summary>
+        /// Loads the application
+        /// </summary>
         public void LoadApplication()
         {
             SetForm();
@@ -48,6 +54,9 @@ namespace ThePainterFormsTest.Controllers
             Application.Run(_form);
         }
 
+        /// <summary>
+        /// Sets form settings
+        /// </summary>
         private void SetForm()
         {
             _form = new Form1();
@@ -55,6 +64,9 @@ namespace ThePainterFormsTest.Controllers
             _form.KeyDown += _form_KeyDown;
         }
 
+        /// <summary>
+        /// Sets canvas on form settings
+        /// </summary>
         private void SetCanvas()
         {
             _canvas = new Canvas();
@@ -66,6 +78,9 @@ namespace ThePainterFormsTest.Controllers
             CommandExecuter.Init(_canvas);
         }
 
+        /// <summary>
+        /// Sets button event listeners
+        /// </summary>
         private void SetButtonEventListeners()
         {
             _form.RectangleButton.Click += RectangleButton_Click;
@@ -80,6 +95,11 @@ namespace ThePainterFormsTest.Controllers
             _form.AddOrnamentButton.Click += AddOrnament_Click;
         }
 
+        /// <summary>
+        /// Handles click event from ornament button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddOrnament_Click(object sender, EventArgs e)
         {
             using (var form = new OrnamentForm())
@@ -100,6 +120,11 @@ namespace ThePainterFormsTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Handles click event from remove group button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RemoveGroupButton_Click(object sender, EventArgs e)
         {
             if(_canvas.SelectedItem is Group)
@@ -108,6 +133,11 @@ namespace ThePainterFormsTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Handles click event from add group button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddGroupButton_Click(object sender, EventArgs e)
         {
             List<DrawableItem> items = new List<DrawableItem>();
@@ -129,6 +159,12 @@ namespace ThePainterFormsTest.Controllers
             } 
         }
 
+        /// <summary>
+        /// Gets the lowest index of a list of items
+        /// </summary>
+        /// <param name="items">items</param>
+        /// <param name="parent">parent</param>
+        /// <returns>lowest index</returns>
         private int GetLowestIndex(List<DrawableItem> items, out DrawableItem parent)
         {
             int low = int.MaxValue;
@@ -164,6 +200,11 @@ namespace ThePainterFormsTest.Controllers
             return low;
         }
 
+        /// <summary>
+        /// Gets the index of a item
+        /// </summary>
+        /// <param name="item">item</param>
+        /// <returns>index</returns>
         private int GetIndex(DrawableItem item)
         {
             int index = -1;
@@ -181,6 +222,10 @@ namespace ThePainterFormsTest.Controllers
         }
 
         private bool _listBoxHasFocus = false;
+
+        /// <summary>
+        /// Set listbox eventlisteners
+        /// </summary>
         private void SetListBoxEventListeners()
         {
             _form.TreeView.GotFocus += (s, e) => { _listBoxHasFocus = true; };
@@ -188,6 +233,11 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.SelectionChanged += ListBox_SelectedValueChanged;
         }
 
+        /// <summary>
+        /// Handles listbox selected value change event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ListBox_SelectedValueChanged(object sender, EventArgs e)
         {   
             if(_listBoxHasFocus)
@@ -206,6 +256,11 @@ namespace ThePainterFormsTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Handles click event on clear canvas button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClearCanvasButton_Click(object sender, EventArgs e)
         {
             if(MessageBox.Show("Weet u zeker dat u het canvas wil legen?","The Painter",MessageBoxButtons.YesNo,MessageBoxIcon.Question) == DialogResult.Yes)
@@ -214,11 +269,21 @@ namespace ThePainterFormsTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Handles in on paint event of canvas
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Canvas_Paint(object sender, PaintEventArgs e)
         {
             _canvas.Draw(e.Graphics);
         }
 
+        /// <summary>
+        /// Handles save button click event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SaveFileButton_Click(object sender, EventArgs e)
         {
             SaveFileDialog dialog = new SaveFileDialog();
@@ -233,6 +298,11 @@ namespace ThePainterFormsTest.Controllers
 
         }
 
+        /// <summary>
+        /// Handles open file button click event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
@@ -248,6 +318,11 @@ namespace ThePainterFormsTest.Controllers
 
         }
 
+        /// <summary>
+        /// Handles keydown event on form for undo and redo actions
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void _form_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Control && e.KeyCode == Keys.Z)
@@ -260,29 +335,50 @@ namespace ThePainterFormsTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Handles ellipse button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Ellipse_Click(object sender, EventArgs e)
         {
             CommandExecuter.Execute(new ChangeDrawingMode(Canvas.Mode.Ellipse));
         }
-
+        
+        /// <summary>
+        /// Handles rectangle button click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RectangleButton_Click(object sender, EventArgs e)
         {
             CommandExecuter.Execute(new ChangeDrawingMode(Canvas.Mode.Rectange));
         }
 
+        /// <summary>
+        /// Sets the right color to the buttons
+        /// </summary>
+        /// <param name="rectangleColor">color for rectangle</param>
+        /// <param name="ellipseColor">color for ellipse</param>
         public void SetButtonCLickedColors(Color rectangleColor, Color ellipseColor)
         {
             _form.EllipseButton.BackColor = ellipseColor;
             _form.RectangleButton.BackColor = rectangleColor;
         }
 
+        /// <summary>
+        /// Invalidate canvas
+        /// </summary>
         public void InvalidateCanvas()
         {
             _form.Canvas.Invalidate();
         }
 
         #region TreeList functions
-
+        /// <summary>
+        /// Adds node to treelist
+        /// </summary>
+        /// <param name="drawableItem">item</param>
         public void AddNode(DrawableItem drawableItem)
         {
             _form.TreeView.BeginUpdate();
@@ -291,6 +387,11 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.ExpandAll();
         }
 
+        /// <summary>
+        /// Inserts node on index in treelist
+        /// </summary>
+        /// <param name="drawableItem">item</param>
+        /// <param name="index">index</param>
         public void AddNode(DrawableItem drawableItem, int index)
         {
             _form.TreeView.BeginUpdate();
@@ -299,6 +400,10 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.ExpandAll();
         }
 
+        /// <summary>
+        /// Add list of nodes
+        /// </summary>
+        /// <param name="items">items</param>
         public void AddNode(List<DrawableItem> items)
         {
             _form.TreeView.BeginUpdate();
@@ -312,6 +417,10 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.ExpandAll();
         }
 
+        /// <summary>
+        /// Removes node from treelist
+        /// </summary>
+        /// <param name="drawableItem">item</param>
         public void RemoveNode(DrawableItem drawableItem)
         {
             _form.TreeView.BeginUpdate();
@@ -322,6 +431,10 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.ExpandAll();
         }
 
+        /// <summary>
+        /// Removes list of nodes from treelist
+        /// </summary>
+        /// <param name="drawableItems">items</param>
         public void RemoveNode(List<DrawableItem> drawableItems)
         {
             _form.TreeView.BeginUpdate();
@@ -335,6 +448,11 @@ namespace ThePainterFormsTest.Controllers
             _form.TreeView.ExpandAll();
         }
 
+        /// <summary>
+        /// Select a node
+        /// </summary>
+        /// <param name="item">item</param>
+        /// <param name="value">select or deselect</param>
         public void SelectNode(DrawableItem item, bool value)
         {
             if (item == null)
@@ -359,6 +477,9 @@ namespace ThePainterFormsTest.Controllers
             _listBoxHasFocus = oldValue;
         }
 
+        /// <summary>
+        /// Clear the treelist
+        /// </summary>
         public void ClearTree()
         {
             _form.TreeView.Nodes.Clear();
@@ -366,11 +487,19 @@ namespace ThePainterFormsTest.Controllers
 
         #endregion
 
+        /// <summary>
+        /// Enables or disables remove group button
+        /// </summary>
+        /// <param name="enabled">enabled or disabled</param>
         public void EnableRemoveGroupButton(bool enabled)
         {
             _form.RemoveGroupButton.Enabled = enabled;
         }
 
+        /// <summary>
+        /// Enables or disables add ornament button
+        /// </summary>
+        /// <param name="enabled">enabled or disabled</param>
         public void EnableAddOrnamentButton(bool enabled)
         {
             _form.AddOrnamentButton.Enabled = enabled;
@@ -379,6 +508,12 @@ namespace ThePainterFormsTest.Controllers
         #region Mouse events
         private Point _begin = Point.Empty;
         private Point _deltaBegin = Point.Empty;
+
+        /// <summary>
+        /// Handles mouse up event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Canvas_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && !_canvas.HasSelected)
@@ -408,12 +543,22 @@ namespace ThePainterFormsTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Handles mouse down event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
         {
             _begin = e.Location;
             _deltaBegin = e.Location;
         }
 
+        /// <summary>
+        /// Handles mouse move event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right && !_canvas.HasSelected)
@@ -449,6 +594,11 @@ namespace ThePainterFormsTest.Controllers
 
         }
 
+        /// <summary>
+        /// Create item
+        /// </summary>
+        /// <param name="begin">begin point</param>
+        /// <param name="end">end point</param>
         public void CreateItem(Point begin, Point end)
         {
             _canvas.ClearTempItem();
@@ -473,6 +623,11 @@ namespace ThePainterFormsTest.Controllers
             }
         }
 
+        /// <summary>
+        /// Resize item
+        /// </summary>
+        /// <param name="begin">begin point</param>
+        /// <param name="end">end point</param>
         public void ResizeItem(Point begin, Point end)
         {
             if (_canvas.HasSelected)
@@ -483,6 +638,10 @@ namespace ThePainterFormsTest.Controllers
 
         #endregion
 
+        /// <summary>
+        /// Selects on location
+        /// </summary>
+        /// <param name="location">location</param>
         public void SelectItemWithDeselect(Point location)
         {
             foreach (var item in _canvas.Items)
@@ -497,6 +656,9 @@ namespace ThePainterFormsTest.Controllers
             DeSelect();
         }
 
+        /// <summary>
+        /// Deselects
+        /// </summary>
         public void DeSelect()
         {
             if (_canvas.HasSelected)

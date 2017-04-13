@@ -7,8 +7,17 @@ using System.Windows.Forms;
 
 namespace ThePainterFormsTest
 {
+    /// <summary>
+    /// Extention class for treeNodecollection
+    /// </summary>
     public static class TreeNodeCollectionExtension
     {
+        /// <summary>
+        /// Checks if node is in collection
+        /// </summary>
+        /// <param name="coll">treenode collection</param>
+        /// <param name="node">node</param>
+        /// <returns></returns>
         public static bool IsInCollection(this TreeNodeCollection coll,TreeNode node)
         {
             foreach(TreeNode item in coll)

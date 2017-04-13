@@ -11,6 +11,9 @@ using ThePainterFormsTest.States;
 
 namespace ThePainterFormsTest.Models
 {
+    /// <summary>
+    /// File parser class
+    /// </summary>
     public class FileParser
     {
 
@@ -22,6 +25,9 @@ namespace ThePainterFormsTest.Models
 
         private int Line { get; set; }
 
+        /// <summary>
+        /// Singleton version
+        /// </summary>
         private static FileParser _instance;
         public static FileParser Instance
         {
@@ -39,6 +45,11 @@ namespace ThePainterFormsTest.Models
 
         #region Parser
 
+        /// <summary>
+        /// Reads the file and returns a list of items
+        /// </summary>
+        /// <param name="path">path to the file</param>
+        /// <returns>list of items for on the canvas</returns>
         public List<DrawableItem> ReadFile(string path)
         {
             if (!File.Exists(path))
@@ -54,7 +65,11 @@ namespace ThePainterFormsTest.Models
             return Parser(lines);
         }
 
-
+        /// <summary>
+        /// Parsers the lines to items
+        /// </summary>
+        /// <param name="lines">lines of the file</param>
+        /// <returns>items for on the canvas</returns>
         private List<DrawableItem> Parser(string[] lines)
         {
             List<DrawableItem> items = new List<DrawableItem>();
@@ -75,6 +90,11 @@ namespace ThePainterFormsTest.Models
             return items;
         }
 
+        /// <summary>
+        /// Get item(s) per line
+        /// </summary>
+        /// <param name="lines">lines of the file</param>
+        /// <returns>List with item for that line</returns>
         private List<DrawableItem> GetItems(string[] lines)
         {
             string line = lines[Line].Trim();
@@ -87,7 +107,7 @@ namespace ThePainterFormsTest.Models
                     item = GroupParser(lines, GetGroupItemCount(line));
                     break;
                 case ORNAMENT:
-                    return OrnamentParser(lines, line);
+                    return OrnamentParser(lines);
                 case ELLIPSE:
                     item = EllipseParser(line);
                     break;
@@ -101,8 +121,14 @@ namespace ThePainterFormsTest.Models
             return new List<DrawableItem>() { item };
         }
 
-        private List<DrawableItem> OrnamentParser(string[] lines, string line)
+        /// <summary>
+        /// Parses the ornament(s)
+        /// </summary>
+        /// <param name="lines">lines of the file</param>
+        /// <returns>the ornament(s) and his child item</returns>
+        private List<DrawableItem> OrnamentParser(string[] lines)
         {
+            string line = lines[Line];
             List<string> newOrnaments = new List<string>();
 
             while(IsOrnament(line) && Line < lines.Length)
@@ -124,6 +150,12 @@ namespace ThePainterFormsTest.Models
             return items;
         }
 
+        /// <summary>
+        /// Parses one ornament
+        /// </summary>
+        /// <param name="line">ornament line</param>
+        /// <param name="child">child of ornament</param>
+        /// <returns>ornament</returns>
         private Ornament GetOrnament(string line, DrawableItem child)
         {
             string[] splittedLine = line.Split(' ');
@@ -138,6 +170,11 @@ namespace ThePainterFormsTest.Models
             throw new Exception($"Line[{Line}]: Could not parse Ornament");
         }
 
+        /// <summary>
+        /// Gets the state for a ornament
+        /// </summary>
+        /// <param name="stateString">state in the line</param>
+        /// <returns>State object</returns>
         private IOrnamentState GetOrnamentState(string stateString)
         {
             IOrnamentState state;
@@ -163,11 +200,21 @@ namespace ThePainterFormsTest.Models
             return state;
         }
 
+        /// <summary>
+        /// Checks if current line is an ornament
+        /// </summary>
+        /// <param name="line">line form file</param>
+        /// <returns>true when ornament, otherwise false</returns>
         private bool IsOrnament(string line)
         {
             return GetItemName(line) == ORNAMENT;
         }
 
+        /// <summary>
+        /// Get item count for a group
+        /// </summary>
+        /// <param name="line">line from file</param>
+        /// <returns>count of items in the group</returns>
         private int GetGroupItemCount(string line)
         {
             string[] splitted = line.Split(' ');
@@ -182,6 +229,12 @@ namespace ThePainterFormsTest.Models
             return count;
         }
 
+        /// <summary>
+        /// Parses a group
+        /// </summary>
+        /// <param name="lines">lines from file</param>
+        /// <param name="count">count of items</param>
+        /// <returns>Group</returns>
         private Group GroupParser(string[] lines, int count)
         {
             List<DrawableItem> items = new List<DrawableItem>();
@@ -205,19 +258,11 @@ namespace ThePainterFormsTest.Models
             return new Group(items);
         }
 
-        private int CountTabs(string line)
-        {
-            int count = 0;
-            foreach(char c in line)
-            {
-                if (char.IsLetterOrDigit(c))
-                    break;
-                if (c == '\t')
-                    count++;
-            }
-            return count;
-        }
-
+        /// <summary>
+        /// Parse a rectangle
+        /// </summary>
+        /// <param name="line">line of file</param>
+        /// <returns>rectangle</returns>
         private BasicFigure RectangleParser(string line)
         {
             string[] options = GetOptions(line);
@@ -239,6 +284,11 @@ namespace ThePainterFormsTest.Models
             throw new Exception($"Line[{Line}]: Could not parse Rectangle");
         }
 
+        /// <summary>
+        /// Parse an ellipse
+        /// </summary>
+        /// <param name="line">line of file</param>
+        /// <returns>ellipse</returns>
         private BasicFigure EllipseParser(string line)
         {
             string[] options = GetOptions(line);
@@ -260,6 +310,11 @@ namespace ThePainterFormsTest.Models
             throw new Exception($"Line[{Line}]: Could not parse Ellipse");
         }
 
+        /// <summary>
+        /// Gets the name of the item by a line
+        /// </summary>
+        /// <param name="line">line of file</param>
+        /// <returns>item name</returns>
         private string GetItemName(string line)
         {
             string[] lineArray = line.Split(' ');
@@ -272,6 +327,11 @@ namespace ThePainterFormsTest.Models
             throw new Exception($"Line[{Line}]: Item not found");
         }
 
+        /// <summary>
+        /// Gets the options by a line
+        /// </summary>
+        /// <param name="line">line of file</param>
+        /// <returns>options</returns>
         private string[] GetOptions(string line)
         {
             string[] lineArray = line.Split(' ');
@@ -287,7 +347,12 @@ namespace ThePainterFormsTest.Models
         #endregion
 
         #region Writer
-
+        /// <summary>
+        /// Write items to a file
+        /// </summary>
+        /// <param name="path">path to save</param>
+        /// <param name="items">items to save</param>
+        /// <returns>true when successful, otherwise false</returns>
         public bool WriteFile(string path, List<DrawableItem> items)
         {
             try
@@ -306,6 +371,11 @@ namespace ThePainterFormsTest.Models
             return true;
         }
 
+        /// <summary>
+        /// Serialize the items
+        /// </summary>
+        /// <param name="items">items to save</param>
+        /// <returns>serialized string of the items</returns>
         private string SerializeItems(List<DrawableItem> items)
         {
             Group group = new Group(items);

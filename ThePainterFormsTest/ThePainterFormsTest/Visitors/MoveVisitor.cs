@@ -7,6 +7,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// Move item visitor
+    /// </summary>
     public class MoveVisitor : IVisitor
     {
         private int _x;

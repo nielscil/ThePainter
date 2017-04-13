@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.States
 {
+    /// <summary>
+    /// Ornament Left State
+    /// </summary>
     public class OrnamentLeft : IOrnamentState
     {
         private static OrnamentLeft _instance;
@@ -35,6 +38,11 @@ namespace ThePainterFormsTest.States
             }
         }
 
+        /// <summary>
+        /// Gets drawing position
+        /// </summary>
+        /// <param name="ornament">ornament</param>
+        /// <returns>position</returns>
         public PointF GetPosition(Ornament ornament)
         {
             int x = ornament.X - 20;

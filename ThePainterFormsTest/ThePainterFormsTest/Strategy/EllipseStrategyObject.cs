@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Strategy
 {
+    /// <summary>
+    /// Ellipse strategy object
+    /// </summary>
     class EllipseStrategyObject : IStrategy
     {
 
@@ -27,6 +30,11 @@ namespace ThePainterFormsTest.Strategy
 
         private EllipseStrategyObject() { }
 
+        /// <summary>
+        /// Draw ellipse
+        /// </summary>
+        /// <param name="graphics">grahpics</param>
+        /// <param name="figure">figure</param>
         public void Draw(Graphics graphics, BasicFigure figure)
         {
             using (Pen pen = new Pen(figure.Color))
@@ -35,6 +43,10 @@ namespace ThePainterFormsTest.Strategy
             }
         }
 
+        /// <summary>
+        /// Gets the name of the figure
+        /// </summary>
+        /// <returns>name</returns>
         public string GetName()
         {
             return "ellipse";

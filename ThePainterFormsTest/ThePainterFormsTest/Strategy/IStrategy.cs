@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Strategy
 {
+    /// <summary>
+    /// Strategy interface for basic figure
+    /// </summary>
     public interface IStrategy
     {
         void Draw(Graphics graphics,BasicFigure figure);

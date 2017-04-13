@@ -7,6 +7,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Commands
 {
+    /// <summary>
+    /// Open file commandclass
+    /// </summary>
     class OpenFile : ICommand
     {
         string _filePath;
@@ -16,11 +19,19 @@ namespace ThePainterFormsTest.Commands
         List<DrawableItem> _tempdata;
         DrawableItem _selected;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="filePath">path to the file</param>
         public OpenFile(string filePath)
         {
             _filePath = filePath;
         }
 
+        /// <summary>
+        /// Executes the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Execute(Canvas canvas)
         {
             _tempdata = canvas.Items;
@@ -30,6 +41,10 @@ namespace ThePainterFormsTest.Commands
             canvas.OpenFile(_filePath);
         }
 
+        /// <summary>
+        /// Undo's the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Undo(Canvas canvas)
         {
             CommandExecuter.SetExecutionState(_history, _redoHistory);

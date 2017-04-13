@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// Select item visitor
+    /// </summary>
     public class SelectVisitor : IVisitor
     {
         private static SelectVisitor _selectVisitor;

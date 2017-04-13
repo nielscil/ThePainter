@@ -10,11 +10,20 @@ using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Commands
 {
+    /// <summary>
+    /// Move item commandclass
+    /// </summary>
     class MoveItem : ICommand
     {
         private int _x, _y, _oldX, _oldY;
         private DrawableItem _item;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="item">to be moved item</param>
+        /// <param name="begin">begin point</param>
+        /// <param name="end">end point</param>
         public MoveItem(DrawableItem item, Point begin, Point end)
         {
             _x = end.X - begin.X;
@@ -24,6 +33,10 @@ namespace ThePainterFormsTest.Commands
             _item = item;
         }
 
+        /// <summary>
+        /// Executes the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Execute(Canvas canvas)
         {
             canvas.SelectedItem = null;
@@ -35,6 +48,10 @@ namespace ThePainterFormsTest.Commands
             Controller.Instance.InvalidateCanvas();
         }
 
+        /// <summary>
+        /// Undo's the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Undo(Canvas canvas)
         {
             canvas.SelectedItem = null;

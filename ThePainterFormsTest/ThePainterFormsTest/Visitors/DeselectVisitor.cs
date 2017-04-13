@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// Deselect visitor
+    /// </summary>
     public class DeselectVisitor : IVisitor
     {
 

@@ -7,6 +7,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// Visitor interface for the items
+    /// </summary>
     public interface IVisitor
     {
         void BeforeGroup(Group group);

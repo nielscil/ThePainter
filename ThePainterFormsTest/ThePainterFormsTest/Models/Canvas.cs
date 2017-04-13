@@ -12,6 +12,9 @@ using ThePainterFormsTest.Strategy;
 
 namespace ThePainterFormsTest.Models
 {
+    /// <summary>
+    /// Canvas class
+    /// </summary>
     public class Canvas
     {
         private Controller Controller
@@ -89,11 +92,18 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Canvas()
         {
             DrawingMode = Mode.Rectange;
         }
 
+        /// <summary>
+        /// Add item
+        /// </summary>
+        /// <param name="item">item</param>
         public void AddItem(DrawableItem item)
         {
             Items.Add(item);
@@ -101,6 +111,11 @@ namespace ThePainterFormsTest.Models
             item.Parent = null;
         }
 
+        /// <summary>
+        /// Add group
+        /// </summary>
+        /// <param name="group">group</param>
+        /// <param name="index">index</param>
         public void AddGroup(Group group, int index)
         {
             if(group.Parent == null)
@@ -126,6 +141,11 @@ namespace ThePainterFormsTest.Models
             
         }
 
+        /// <summary>
+        /// Adds ornament
+        /// </summary>
+        /// <param name="ornament">ornament</param>
+        /// <param name="index">index</param>
         public void AddOrnament(Ornament ornament,int index)
         {
             if (ornament.Parent == null)
@@ -138,6 +158,11 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+        /// <summary>
+        /// Adds item on index
+        /// </summary>
+        /// <param name="item">item</param>
+        /// <param name="index">index</param>
         public void AddItem(DrawableItem item, int index)
         {
             Items.Insert(index, item);
@@ -145,18 +170,31 @@ namespace ThePainterFormsTest.Models
             item.Parent = null;
         }
 
+        /// <summary>
+        /// Adds range
+        /// </summary>
+        /// <param name="items">items</param>
         public void AddRange(List<DrawableItem> items)
         {
             Items.AddRange(items);
             Controller.AddNode(items);
         }
 
+        /// <summary>
+        /// Remove item
+        /// </summary>
+        /// <param name="item">item</param>
         public void RemoveItem(DrawableItem item)
         {
             Items.Remove(item);
             Controller.RemoveNode(item);
         }
 
+        /// <summary>
+        /// Remove group
+        /// </summary>
+        /// <param name="group">remove</param>
+        /// <returns>index</returns>
         public int RemoveGroup(Group group)
         {
             int index;
@@ -191,6 +229,11 @@ namespace ThePainterFormsTest.Models
             return index;
         }
 
+        /// <summary>
+        /// Remove ornament
+        /// </summary>
+        /// <param name="ornament">ornament</param>
+        /// <returns>index</returns>
         public int RemoveOrnament(Ornament ornament)
         {
             int index;
@@ -209,6 +252,10 @@ namespace ThePainterFormsTest.Models
             return index;
         }
 
+        /// <summary>
+        /// Draws all items
+        /// </summary>
+        /// <param name="graphics">graphics</param>
         public void Draw(Graphics graphics)
         {
             IVisitor drawVisitor = new DrawVisitor(graphics);
@@ -222,6 +269,11 @@ namespace ThePainterFormsTest.Models
         #region For Showing animation while changing
 
         private DrawableItem _tempItem = null;
+        /// <summary>
+        /// Showing the creation animation
+        /// </summary>
+        /// <param name="begin">begin point</param>
+        /// <param name="end">end point</param>
         public void IsCreating(Point begin, Point end)
         {
             if(_tempItem == null)
@@ -244,6 +296,11 @@ namespace ThePainterFormsTest.Models
             Controller.InvalidateCanvas();
         }
 
+        /// <summary>
+        /// Is moving animation
+        /// </summary>
+        /// <param name="begin">begin point</param>
+        /// <param name="end">end point</param>
         public void IsMoving(Point begin, Point end)
         {
             if(HasSelected)
@@ -254,6 +311,11 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+        /// <summary>
+        /// Resizing animation
+        /// </summary>
+        /// <param name="begin">begin point</param>
+        /// <param name="end">end point</param>
         public void IsResizing(Point begin, Point end)
         {
             if (HasSelected)
@@ -264,6 +326,9 @@ namespace ThePainterFormsTest.Models
             }            
         }
 
+        /// <summary>
+        /// Clears the temp item
+        /// </summary>
         public void ClearTempItem()
         {
             _tempItem = null;
@@ -271,6 +336,10 @@ namespace ThePainterFormsTest.Models
 
         #endregion
 
+        /// <summary>
+        /// Open file
+        /// </summary>
+        /// <param name="path">path to file</param>
         public void OpenFile(string path)
         {
             List<DrawableItem> readedItems = FileParser.Instance.ReadFile(path);
@@ -286,6 +355,10 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+        /// <summary>
+        /// Saves to file
+        /// </summary>
+        /// <param name="path">path to file</param>
         public void SaveFile(string path)
         {
             if(FileParser.Instance.WriteFile(path, Items))
@@ -297,6 +370,11 @@ namespace ThePainterFormsTest.Models
             }
         }
 
+        /// <summary>
+        /// Set temp data
+        /// </summary>
+        /// <param name="items">items</param>
+        /// <param name="selectedItem">selected item</param>
         public void SetTempData(List<DrawableItem> items, DrawableItem selectedItem)
         {
             Items = items;
@@ -308,6 +386,9 @@ namespace ThePainterFormsTest.Models
             Controller.InvalidateCanvas();
         }
 
+        /// <summary>
+        /// Clear canvas
+        /// </summary>
         public void ClearCanvas()
         {
             Items.Clear();
@@ -320,6 +401,9 @@ namespace ThePainterFormsTest.Models
             Controller.InvalidateCanvas();
         }
 
+        /// <summary>
+        /// Set button clicked
+        /// </summary>
         private void SetButtonClicked()
         {
             Color rectangleColor = DrawingMode == Mode.Rectange ? Color.DarkGray : Color.FromKnownColor(KnownColor.Control);

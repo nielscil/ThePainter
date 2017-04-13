@@ -7,6 +7,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// Resize item visitor
+    /// </summary>
     public class ResizeVisitor : IVisitor
     {
         private int _width;

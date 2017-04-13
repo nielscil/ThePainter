@@ -7,6 +7,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// File visitor for serializing the items
+    /// </summary>
     public class FileVisitor : IVisitor
     {
         public StringBuilder StringBuilder { get; } = new StringBuilder();

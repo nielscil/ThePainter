@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.States
 {
+    /// <summary>
+    /// State of ornament
+    /// </summary>
     public interface IOrnamentState
     {
         string State { get; }

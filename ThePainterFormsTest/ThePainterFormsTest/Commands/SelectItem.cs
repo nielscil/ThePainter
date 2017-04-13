@@ -9,15 +9,26 @@ using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Commands
 {
+    /// <summary>
+    /// Select item commandclass
+    /// </summary>
     class SelectItem : ICommand
     {
         private DrawableItem _item;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="item">to be selected item</param>
         public SelectItem(DrawableItem item)
         {
             _item = item;
         }
 
+        /// <summary>
+        /// Executes the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Execute(Canvas canvas)
         {
 
@@ -27,6 +38,10 @@ namespace ThePainterFormsTest.Commands
             Controller.Instance.InvalidateCanvas();
         }
 
+        /// <summary>
+        /// Undo's the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Undo(Canvas canvas)
         {
             _item.Accept(DeselectVisitor.Instance);

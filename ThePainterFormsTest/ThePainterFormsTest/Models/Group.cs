@@ -11,6 +11,9 @@ using ThePainterFormsTest.Visitors;
 
 namespace ThePainterFormsTest.Models
 {
+    /// <summary>
+    /// Group item class
+    /// </summary>
     public class Group : DrawableItem
     {
         public List<DrawableItem> Items
@@ -56,11 +59,18 @@ namespace ThePainterFormsTest.Models
 
         private List<DrawableItem> _subItems = new List<DrawableItem>();        
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Group()
         {
             _subItems = new List<DrawableItem>();
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="items">subitems</param>
         public Group(List<DrawableItem> items)
         {
             _subItems = new List<DrawableItem>(items);
@@ -73,6 +83,11 @@ namespace ThePainterFormsTest.Models
             CalculatePositions();
         }
 
+        /// <summary>
+        /// Add item to group
+        /// </summary>
+        /// <param name="item">item</param>
+        /// <param name="index">index</param>
         public void AddItem(DrawableItem item, int index)
         {
             _subItems.Insert(index, item);
@@ -84,6 +99,10 @@ namespace ThePainterFormsTest.Models
             CalculatePositions();
         }
 
+        /// <summary>
+        /// Removes item from group
+        /// </summary>
+        /// <param name="item">item</param>
         public void RemoveItem(DrawableItem item)
         {
             _subItems.Remove(item);
@@ -93,12 +112,19 @@ namespace ThePainterFormsTest.Models
             CalculatePositions();
         }
 
+        /// <summary>
+        /// Notify position changed override
+        /// </summary>
         public override void NotifyPositionChangeToParent()
         {
             CalculatePositions();
             base.NotifyPositionChangeToParent();
         }
 
+        /// <summary>
+        /// clone item
+        /// </summary>
+        /// <returns>clone</returns>
         public override DrawableItem Clone()
         {
             List<DrawableItem> items = new List<DrawableItem>();
@@ -112,6 +138,9 @@ namespace ThePainterFormsTest.Models
             return group;
         }
 
+        /// <summary>
+        /// Calculate position of group using the child positions
+        /// </summary>
         public void CalculatePositions()
         {
             int x = int.MaxValue;
@@ -134,6 +163,10 @@ namespace ThePainterFormsTest.Models
             Height = farHeight - Y;
         }
 
+        /// <summary>
+        /// Accept a visitor
+        /// </summary>
+        /// <param name="visitor">visitor</param>
         public override void Accept(IVisitor visitor)
         {
             visitor.BeforeGroup(this);
@@ -146,6 +179,10 @@ namespace ThePainterFormsTest.Models
             visitor.AfterGroup(this);
         }
 
+        /// <summary>
+        /// To string override to give group name
+        /// </summary>
+        /// <returns>name</returns>
         public override string ToString()
         {
             return "group";

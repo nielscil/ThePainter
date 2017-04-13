@@ -9,6 +9,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Commands
 {
+    /// <summary>
+    /// Clear canvas commandclass
+    /// </summary>
     class ClearCanvas : ICommand
     {
 
@@ -17,6 +20,10 @@ namespace ThePainterFormsTest.Commands
         List<DrawableItem> _tempdata;
         DrawableItem _selected;
 
+        /// <summary>
+        /// Executes the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Execute(Canvas canvas)
         {
             _tempdata = canvas.Items;
@@ -27,6 +34,10 @@ namespace ThePainterFormsTest.Commands
             canvas.ClearCanvas();
         }
 
+        /// <summary>
+        /// Undo's the action
+        /// </summary>
+        /// <param name="canvas"></param>
         public void Undo(Canvas canvas)
         {
             CommandExecuter.SetExecutionState(_history, _redoHistory);

@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// Draw visitor
+    /// </summary>
     public class DrawVisitor : IVisitor
     {
         private Graphics _graphics;

@@ -8,6 +8,9 @@ using ThePainterFormsTest.Models;
 
 namespace ThePainterFormsTest.Visitors
 {
+    /// <summary>
+    /// Temp resizing visitor for resizing animation
+    /// </summary>
     public class TempResizeVisitor : IVisitor
     {
 
