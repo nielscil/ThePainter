@@ -144,7 +144,7 @@ namespace ThePainterFormsTest.Models
                 
             foreach(var l in newOrnaments)
             {
-                items.Insert(0, GetOrnament(l, items.First()));
+                items.Insert(0, GetOrnament(l, items.Last()));
             }
 
             return items;

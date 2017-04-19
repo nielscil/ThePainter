@@ -56,7 +56,7 @@ namespace ThePainterFormsTest.Commands
         {
             canvas.SelectedItem = null;
 
-            _item.Accept(new MoveVisitor(_oldX, _oldY));
+            _item.Accept(new MoveVisitor(_x * -1, _y * -1));
 
             canvas.SelectedItem = _item;
 

@@ -14,7 +14,7 @@ namespace ThePainterFormsTest.Models
     /// <summary>
     /// Group item class
     /// </summary>
-    public class Group : DrawableItem
+    public class Group : DrawableItem, IDisposable
     {
         public List<DrawableItem> Items
         {
@@ -38,6 +38,10 @@ namespace ThePainterFormsTest.Models
                     }
                 }
                 return _node;
+            }
+            set
+            {
+                _node = value;
             }
         }
 
@@ -73,13 +77,35 @@ namespace ThePainterFormsTest.Models
         /// <param name="items">subitems</param>
         public Group(List<DrawableItem> items)
         {
-            _subItems = new List<DrawableItem>(items);
+            List<Ornament> _tempList = new List<Ornament>();
 
             foreach(var item in items)
             {
+                if(item is Ornament)
+                {
+                    _tempList.Add(item as Ornament);
+                }
+                else
+                {
+                    _subItems.Add(item);
+                }
+
                 item.Parent = this;
+                item.SizeChanged += Item_SizeChanged;
             }
 
+            foreach(var item in _tempList)
+            {
+                int index = _subItems.IndexOf(item.Child);
+
+                _subItems.Insert(index, item);
+            }
+
+            CalculatePositions();
+        }
+
+        private void Item_SizeChanged()
+        {
             CalculatePositions();
         }
 
@@ -95,9 +121,11 @@ namespace ThePainterFormsTest.Models
             Node.Nodes.Insert(index, item.Node);
 
             item.Parent = this;
+            item.SizeChanged += Item_SizeChanged;
 
             CalculatePositions();
         }
+
 
         /// <summary>
         /// Removes item from group
@@ -109,17 +137,19 @@ namespace ThePainterFormsTest.Models
 
             Node.Nodes.Remove(item.Node);
 
+            item.SizeChanged -= Item_SizeChanged;
+
             CalculatePositions();
         }
 
-        /// <summary>
-        /// Notify position changed override
-        /// </summary>
-        public override void NotifyPositionChangeToParent()
-        {
-            CalculatePositions();
-            base.NotifyPositionChangeToParent();
-        }
+        ///// <summary>
+        ///// Notify position changed override
+        ///// </summary>
+        //public override void NotifyPositionChangeToParent()
+        //{
+        //    CalculatePositions();
+        //    base.NotifyPositionChangeToParent();
+        //}
 
         /// <summary>
         /// clone item
@@ -186,6 +216,14 @@ namespace ThePainterFormsTest.Models
         public override string ToString()
         {
             return "group";
+        }
+
+        public void Dispose()
+        {
+            foreach(var item in _subItems)
+            {
+                item.SizeChanged -= Item_SizeChanged;
+            }
         }
     }
 }

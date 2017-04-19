@@ -45,6 +45,7 @@ namespace ThePainterFormsTest.Commands
         public void Undo(Canvas canvas)
         {
             canvas.RemoveGroup(_group);
+            _group.Node = null;
         }
     }
 }

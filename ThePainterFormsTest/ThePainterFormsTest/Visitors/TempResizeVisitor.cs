@@ -17,6 +17,22 @@ namespace ThePainterFormsTest.Visitors
         private Point _begin;
         private Point _end;
 
+        private int _isInOrnamentCount = 0;
+        private bool isInOrnament
+        {
+            get
+            {
+                return _isInOrnamentCount > 0;
+            }
+            set
+            {
+                if (value)
+                    _isInOrnamentCount++;
+                else
+                    _isInOrnamentCount--;
+            }
+        }
+
         public TempResizeVisitor(Point begin, Point end)
         {
             _begin = begin;
@@ -25,8 +41,11 @@ namespace ThePainterFormsTest.Visitors
 
         public void Visit(BasicFigure figure)
         {
-            figure.Height += _end.Y - _begin.Y;
-            figure.Width += _end.X - _begin.X;
+            if(!isInOrnament)
+            {
+                figure.Height += _end.Y - _begin.Y;
+                figure.Width += _end.X - _begin.X;
+            }
         }
 
         public void BeforeGroup(Group group)
@@ -41,12 +60,13 @@ namespace ThePainterFormsTest.Visitors
 
         public void BeforeOrnament(Ornament ornament)
         {
-            //Do nothing
+            isInOrnament = true;
+
         }
 
         public void AfterOrnament(Ornament ornament)
         {
-            //Do nothing I guess??
+            isInOrnament = false;
         }
     }
 }

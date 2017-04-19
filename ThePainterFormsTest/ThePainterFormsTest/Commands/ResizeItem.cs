@@ -56,7 +56,7 @@ namespace ThePainterFormsTest.Commands
         {
             canvas.SelectedItem = null;
 
-            _item.Accept(new ResizeVisitor(_oldWith, _oldHeight));
+            _item.Accept(new ResizeVisitor(_width * -1, _height * -1));
 
             canvas.SelectedItem = _item;
 

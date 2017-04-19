@@ -249,7 +249,7 @@ namespace ThePainterFormsTest.Controllers
                     CommandExecuter.Execute(new SelectItemWithDeselectFromTree(treeView.SelectedItems[0].Owner));
                 }
 
-                if (treeView.SelectedItems.Count == 0 || treeView.SelectedItems.Count > 1)
+                if (treeView.SelectedItems.Count == 0 || treeView.SelectedItems.Count > 1 && _canvas.SelectedItem != null)
                 {
                     CommandExecuter.Execute(new DeselectItemFromTree(_canvas.SelectedItem));
                 }

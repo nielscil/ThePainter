@@ -14,7 +14,23 @@ namespace ThePainterFormsTest.Visitors
     {
         private int _x;
         private int _y;
-            
+
+        private int _isInOrnamentCount = 0;
+        private bool isInOrnament
+        {
+            get
+            {
+                return _isInOrnamentCount > 0;
+            }
+            set
+            {
+                if (value)
+                    _isInOrnamentCount++;
+                else
+                    _isInOrnamentCount--;
+            }
+        }
+
         public MoveVisitor(int x, int y)
         {
             _x = x;
@@ -33,20 +49,26 @@ namespace ThePainterFormsTest.Visitors
 
         public void Visit(BasicFigure figure)
         {
-            figure.X += _x;
-            figure.Y += _y;
+            if(!isInOrnament)
+            {
+                figure.X += _x;
+                figure.Y += _y;
 
-            figure.NotifyPositionChangeToParent();
+                //figure.NotifyPositionChangeToParent();
+            }
         }
 
         public void BeforeOrnament(Ornament ornament)
         {
-            //Do nothing
+            //ornament.X += _x;
+            //ornament.Y += _y;
+            isInOrnament = true;
+
         }
 
         public void AfterOrnament(Ornament ornament)
         {
-            //Do nothing I guess??
+            isInOrnament = false;
         }
     }
 }

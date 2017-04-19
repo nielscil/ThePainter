@@ -14,7 +14,7 @@ namespace ThePainterFormsTest.Models
     /// <summary>
     /// Ornament class
     /// </summary>
-    public class Ornament : DrawableItem
+    public class Ornament : DrawableItem, IDisposable
     {
         public string Text { get; private set; }
 
@@ -29,6 +29,7 @@ namespace ThePainterFormsTest.Models
             {
                 _child = value;
                 Parent = _child.Parent;
+                _child.SizeChanged += Item_SizeChanged;
                 SetPosition();
             }
         }
@@ -56,6 +57,11 @@ namespace ThePainterFormsTest.Models
             Y = Child.Y;
             Width = Child.Width;
             Height = Child.Height;
+        }
+
+        private void Item_SizeChanged()
+        {
+            SetPosition();
         }
 
         /// <summary>
@@ -107,18 +113,20 @@ namespace ThePainterFormsTest.Models
         {
             Ornament ornament = new Ornament(Text, Child, _state);
             ornament.Color = Color;
+            ornament.X = X;
+            ornament.Y = Y;
             return ornament;
         }
 
-        /// <summary>
-        /// Notify position changed
-        /// </summary>
-        public override void NotifyPositionChangeToParent()
-        {
-            SetPosition();
+        ///// <summary>
+        ///// Notify position changed
+        ///// </summary>
+        //public override void NotifyPositionChangeToParent()
+        //{
+        //    SetPosition();
 
-            base.NotifyPositionChangeToParent();
-        }
+        //    base.NotifyPositionChangeToParent();
+        //}
 
         /// <summary>
         /// To string override
@@ -127,6 +135,11 @@ namespace ThePainterFormsTest.Models
         public override string ToString()
         {
             return $"Ornament({GetState()}) \"{Text}\"";
+        }
+
+        public void Dispose()
+        {
+            Child.SizeChanged -= Item_SizeChanged;
         }
     }
 }
